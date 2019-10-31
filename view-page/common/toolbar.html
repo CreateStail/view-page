@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+			<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
+			<div class="ui center vertical icon buttons">
+				<a href="home.html" class="ui teal button">简介</a>
+				<a href="background.html" class="ui teal button">背景</a>
+				<a href="data.html" class="ui teal button">数据集</a>
+				<a href="program.html" class="ui teal button">技术方案</a>
+				<a href="#" class="ui teal button">实现代码</a>
+			</div>
+		</div>
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script>
+		$(".toc-button").popup({
+			popup: $('.toc-container'),
+			on: 'click',
+			position: 'left center'
+		})
+
+		tocbot.init({
+			toSelector: '.js-toc',
+			contentSelector: '.js-toc-content',
+			headingSelector: 'h1,h2,h3'
+		});
+		/**
+		 * 滚动检测
+		 */
+		var waypoint = new Waypoint({
+			element: document.getElementById('waypoint'),
+			handler: function(direction) {
+				if(direction == 'down') {
+					$("#toolbar").show();
+				} else {
+					$("#toolbar").hide();
+				}
+			}
+		});
+	</script>
+</html>
+

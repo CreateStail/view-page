@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>发布</title>
+		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
+		<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/css/fileinput.min.css" rel="stylesheet">
+		<link href="../css/index.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
+			<div class="ui container">
+				<div class="ui inverted secondary stackable menu">
+					<h2 class="ui teal header item">文章</h2>
+					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+					<div class="right menu i-item i-mobile-hide" id="loginedDiv">
+						<div class="ui dropdown item">
+							<div class="text">
+								<img class="ui avatar image" src="../static/img/avatar.png" /> 李仁密
+							</div>
+							<i class="dropdown icon"></i>
+							<div class="menu">
+								<a class="item" id="logout">注销</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
+				<i class="sidebar icon"></i>
+			</a>
+		</nav>
+		<div class="ui attached pointing menu">
+			<div class="ui container">
+				<div class="right menu">
+					<a href="#" class=" teal active item">发布</a>
+					<a href="#" class=" item">列表</a>
+				</div>
+			</div>
+		</div>
+		<!--
+        	作者：offline
+        	时间：2019-10-22
+        	描述：内容
+        -->
+		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
+			<div class="ui container">
+				<form class="ui form">
+					<div>
+						<div class="required field">
+							<div class="ui left labeled input">
+								<label class="ui compact teal basic label">主题名称</label>
+								<input type="text" id="theme" />
+							</div>
+						</div>
+						<div class="required field">
+							<div class="ui left labeled input">
+								<label class="ui compact teal basic label">主题图片</label>
+							</div>
+							<div>
+								<input type="file" id="theme_pic" name="file" />
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">简介</h2>
+							<div id="introduction-content" style="z-index: 1 !important;">
+								<textarea placeholder="简介内容" name="content" style="display: none"></textarea>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">背景</h2>
+							<div id="background-content" style="z-index: 1 !important;">
+								<textarea placeholder="背景内容" name="content" style="display: none"></textarea>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">数据集</h2>
+							<div class="required field">
+								<div>
+									<input type="file" id="theme_data" name="file" />
+								</div>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">技术方案</h2>
+							<div class="required field">
+								<div>
+									<input type="file" id="theme_program" name="file" />
+								</div>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">实现代码</h2>
+							<d5iv class="required field">
+								<div>
+									<input type="file" id="theme_code" name="file" />
+								</div>
+						</div>
+					</div>
+			</div>
+			<div class="ui right aligned container">
+				<button type="button" class="ui button" onclick="window.history.go(-1)">返回</button>
+				<button type="button" id="save-btn" class="ui secondary button">保存</button>
+				<button type="button" id="publish-btn" class="ui teal button">发布</button>
+			</div>
+			</form>
+		</div>
+		</div>
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/fileinput.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/locales/zh.min.js"></script>
+	<script src="../lib/editormd/editormd.min.js"></script>
+	<script src="../js/function.js"></script>
+	<script>
+		$('.menu.toggle').click(function() {
+			$('.i-item').toggleClass('i-mobile-hide');
+		});
+		var count = 0;
+		$(function() {
+
+			fileInit('theme_pic', '/view-server/Api/upload')
+			fileInit('theme_data', '/view-server/Api/upload')
+			fileInit('theme_program', '/view-server/Api/upload')
+			fileInit('theme_code', '/view-server/Api/upload')
+			introductionEditor = editormd("introduction-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+			});
+
+			backgroundEditor = editormd("background-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+			});
+
+			/*			contentEditor = editormd("data-content", {
+							width: "100%",
+							height: 640,
+							syncScrolling: "single",
+							path: "../lib/editormd/lib/"
+						});
+
+						contentEditor = editormd("program-content", {
+							width: "100%",
+							height: 640,
+							syncScrolling: "single",
+							path: "../lib/editormd/lib/"
+						});
+
+						contentEditor = editormd("code-content", {
+							width: "100%",
+							height: 640,
+							syncScrolling: "single",
+							path: "../lib/editormd/lib/"
+						});*/
+
+		});
+
+		$('#save-btn').on('click', function() {
+			var themePic = $('#theme_pic').val().trim();
+			if(themePic != '') {
+				count++;
+				$('#theme_pic').fileinput('upload');
+			}
+			var themeData = $('#theme_data').val().trim();
+			if(themeData != '') {
+				count++;
+				$('#theme_data').fileinput('upload');
+			}
+			var themeProgram = $('#theme_program').val().trim();
+			if(themeProgram != '') {
+				count++;
+				$('#theme_program').fileinput('upload');
+			}
+			var themeCode = $('#theme_code').val().trim();
+			if(themeCode != '') {
+				count++;
+				$('#theme_code').fileinput('upload');
+			}
+			if(themePic == ''&&themeData==''&&themeProgram==''&&themeCode==''){
+				transform();
+			}
+		})
+
+		function transform() {
+			var themeMap = {};
+			themeMap.theme = $('#theme').val().trim();
+			themeMap.themePic_Name = $('#theme_pic').attr('fileName');
+			themeMap.themeData_Name = $('#theme_data').attr('fileName');
+			themeMap.themeProgram_Name = $('#theme_program').attr('fileName');
+			themeMap.themeCode_Name = $('#theme_code').attr('fileName');
+			themeMap.themePic_Path = $('#theme_pic').attr('filePath');
+			themeMap.themeData_Path = $('#theme_data').attr('filePath');
+			themeMap.themeProgram_Path = $('#theme_program').attr('filePath');
+			themeMap.themeCode_Path = $('#theme_code').attr('filePath');
+			themeMap.themePic_Addr = $('#theme_pic').attr('fileAddr');
+			themeMap.themeData_Addr = $('#theme_data').attr('fileAddr');
+			themeMap.themeProgram_Addr = $('#theme_program').attr('fileAddr');
+			themeMap.themeCode_Addr = $('#theme_code').attr('fileAddr');
+			themeMap.introduction = introductionEditor.getMarkdown();
+			themeMap.introduction_html = introductionEditor.getHTML();
+			themeMap.background = backgroundEditor.getMarkdown();
+			themeMap.background_html = backgroundEditor.getHTML();
+			console.info(themeMap);
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/saveThemeContent",
+				async: true,
+				data: themeMap,
+				success: function(res) {
+						
+				}
+			});
+		}
+
+		function fileInit(ctrlName, uploadUrl) {
+			var control = $('#' + ctrlName);
+			control.fileinput({
+				language: 'zh',
+				uploadUrl: uploadUrl,
+				enctype: 'multipart/form-data',
+				showUpload: false, //是否显示上传按钮
+				showPreview: true, //展前预览
+				showRemove: true,
+				showCaption: false, //是否显示标题
+				maxFileSize: 3072, //上传文件最大的尺寸kb 3m
+				dropZoneEnabled: true, //是否显示拖拽区域
+				browseClass: "btn btn-primary", //按钮样式
+				uploadAsync: true, //默认异步上传
+			}).on('fileuploaded', function(event, data, previewId, index) {
+				count--;
+				control.attr("fileName", data.response.data.fileName);
+				control.attr("filePath", data.response.data.filePath);
+				control.attr("fileAddr", data.response.data.fileAddr);
+				if(count == 0) {
+					transform();
+				}
+			}).on('filebatchuploadsuccess', function(event, data, previewId, index) { //同步上传回调
+				count--;
+				control.attr("fileName", data.response.data.fileName);
+				control.attr("filePath", data.response.data.filePath);
+				control.attr("fileAddr", data.response.data.fileAddr);
+				if(count == 0) {
+					transform();
+				}
+			});
+		}
+	</script>
+
+</html>

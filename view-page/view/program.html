@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>背景</title>
+		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="../css/typo.css" rel="stylesheet" />
+		<link href="../css/animate.css" rel="stylesheet" />
+		<link href="../lib/prism/prism.css" rel="stylesheet" />
+		<link href="../lib/tocbot/tocbot.css" rel="stylesheet" />
+		<link href="../css/index.css" rel="stylesheet" />
+	</head>
+	<body>
+		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
+			<div class="ui container">
+				<div class="ui inverted secondary stackable menu">
+					<h2 class="ui teal header item">文章</h2>
+					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+					<div class="i-item right item i-mobile-hide">
+						<div class="ui icon inverted transparent input">
+							<input type="text" placeholder="Search...">
+							<i class="search link icon"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
+				<i class="sidebar icon"></i>
+			</a>
+		</nav>
+		<!--
+        	作者：offline
+        	时间：2019-10-22
+        	描述：内容
+        -->
+
+		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
+			<div class="ui container">
+				<div class="ui top attached segment">
+					<div class="ui horizontal link list">
+						<div class="item">
+							<a href="#" class="active ui orange  circular button">Camelyon16</a>
+						</div>
+						<div class="item">
+							<a href="#" class="ui orange basic circular button">BUS</a>
+						</div>
+						<div class="item">
+							<a href="#" class="ui orange basic circular button">all-mias</a>
+						</div>
+					</div>
+				</div>
+				<div class="ui attach segment">
+					<img src="../img/camelyon16.png" class="ui fluid rounded image">
+				</div>
+				<div class="ui  attached padded segment">
+					<div id="content" class="typo js-toc-content  typo-selection js-toc-content i-padded-lr-responsive i-padded-tb-large">
+						<h3>Program details</h3>
+						<p>The Camelyon16 ISBI challenge event took place on Wednesday, 13 April, 8:30am-12:15am. Challenge participants with the most successful and innovative entries presented their work. The presentations from the organizing team are now available (see below). After the event, the CAMELYON16 submission page is reopened and new submissions were accepted until November 2016. </p>
+					</div>
+					<img src="../img/Event.jpg" class="ui image" />
+
+					<table class="ui table">
+						<tr>
+							<td>Title of presentation</td>
+							<td>Presenter</td>
+						</tr>
+						<tr>
+							<td>Camlyon16:Aim,dataset,and evaluation</td>
+							<td>Babak Ehteshami Beinordi</td>
+						</tr>
+						<tr>
+							<td>How computers shape the future of pathology</td>
+							<td>Jeroen van der Laak</td>
+						</tr>
+						<tr>
+							<td>Statistics,Leaderboards,Result and Comparison to Pathologist</td>
+							<td>Babak Ehteshami Bejnordi</td>
+						</tr>
+					</table>
+					<div>
+
+						<img src="../img/Program.png" class="ui image" />
+					</div>
+
+				</div>
+			</div>
+			<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
+				<div class="ui center vertical icon buttons">
+					<a href="home.html" class="ui teal button">简介</a>
+					<a href="background.html" class="ui teal button">背景</a>
+					<a href="background.html" class="ui teal button">数据集</a>
+					<a href="#comment-container" class="ui teal button">技术方案</a>
+					<a href="#comment-container" class="ui teal button">实现代码</a>
+				</div>
+			</div>
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+	<script src="../lib/prism/prism.js"></script>
+	<script src="../lib/tocbot/tocbot.min.js"></script>
+	<script src="../lib/qrcode/qrcode.min.js"></script>
+	<script src="../lib/waypoints/jquery.waypoints.min.js"></script>
+	<script>
+		$('.menu.toggle').click(function() {
+			$('.i-item').toggleClass('i-mobile-hide');
+		});
+
+		$(".toc-button").popup({
+			popup: $('.toc-container'),
+			on: 'click',
+			position: 'left center'
+		})
+
+		tocbot.init({
+			toSelector: '.js-toc',
+			contentSelector: '.js-toc-content',
+			headingSelector: 'h1,h2,h3'
+		});
+		/**
+		 * 滚动检测
+		 */
+		var waypoint = new Waypoint({
+			element: document.getElementById('waypoint'),
+			handler: function(direction) {
+				if(direction == 'down') {
+					$("#toolbar").show();
+				} else {
+					$("#toolbar").hide();
+				}
+			}
+		});
+	</script>
+
+</html>
