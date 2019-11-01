@@ -5,12 +5,16 @@
 		<meta charset="UTF-8">
 		<title>数据集</title>
 		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
 		<link href="../css/typo.css" rel="stylesheet" />
 		<link href="../css/animate.css" rel="stylesheet" />
 		<link href="../lib/prism/prism.css" rel="stylesheet" />
 		<link href="../lib/tocbot/tocbot.css" rel="stylesheet" />
 		<link href="../css/index.css" rel="stylesheet" />
 	</head>
+	<style>
+
+	</style>
 
 	<body>
 		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
@@ -39,46 +43,16 @@
 		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
 			<div class="ui container">
 				<div class="ui top attached segment">
-					<div class="ui horizontal link list">
-						<div class="item">
-							<a href="#" class="active ui orange  circular button">Camelyon16</a>
-						</div>
-						<div class="item">
-							<a href="#" class="ui orange basic circular button">BUS</a>
-						</div>
-						<div class="item">
-							<a href="#" class="ui orange basic circular button">all-mias</a>
-						</div>
+					<div class="ui horizontal link list" id="theme_list">
+
 					</div>
 				</div>
 				<div class="ui attach segment">
-					<img src="../img/camelyon16.png" class="ui fluid rounded image">
+					<img src="" class="ui fluid rounded image" id="theme_pic">
 				</div>
 				<div class="ui  attached padded segment">
 					<div id="content" class="typo js-toc-content  typo-selection js-toc-content i-padded-lr-responsive i-padded-tb-large">
-						<h2 class="ui center aligned header">The CAMELYON16 challenge has ended in November 2016
-						PLEASE CHECK OUT CAMELYON17:
-						</h2>
-						<div class="ui center " style="text-align: center;">
-							<a class="i-font-big ">https://camelyon17.grand-challenge.org</a>
-						</div>
-						<p>The data in this challenge contains a total of 400 whole-slide images (WSIs) of sentinel lymph node from two independent datasets collected in Radboud University Medical Center (Nijmegen, the Netherlands), and the University Medical Center Utrecht (Utrecht, the Netherlands).</p>
-						<h3>The training dataset</h3>
-						<p>The first training dataset consists of 170 WSIs of lymph node (100 Normal and 70 containing metastases) and the second 100 WSIs (including 60 normal slides and 40 slides containing metastases).</p>
-						<p>The ground truth data for the slides containing metastases is provided in two formats:</p>
-						<ul>
-							<li>.xml files containing vertices of the annotated contours</li>
-							<li>WSI binary Masks</li>
-						</ul>
-						<h2>The test dataset</h2>
-						<p>The test dataset consists of 130 WSIs which are collected from both Universities.</p>
-						<h2>Visualizing the images and annotations</h2>
-						<img src="../img/Picture1.png" class="ui medium left floated image" />
-						<p> Whole-slide images are generally stored in a multi-resolution pyramid structure. Image files contain multiple downsampled versions of the original image. Each image in the pyramid is stored as a series of tiles, to facilitate rapid retrieval of subregions of the image. Reading these images using standard image tools or libraries is a challenge because these tools are typically designed for images that can comfortably be uncompressed into RAM or a swap file. OpenSlide is a C library that provides a simple interface to read WSIs of different formats. Automated Slide Analysis Platform (ASAP) is an open source platform for visualizing, annotating and automatically analyzing whole-slide histopathology images. ASAP is built on top of several well-developed open source packages like OpenSlide, Qt and OpenCV. We strongly recommend the participants to use this platform for visualizing the slides and viewing the annotations. You can download ASAP from Github.</p>
-						<p>Example of a metastatic region:</p>
-						<img src="../img/Low_Resolution.png" class="ui medium left floated image" />
-						<img src="../img/Mid_Resolution.png" class="ui medium right floated image" />
-						<img src="../img/High_Resolution_2.png" class="ui image" />
+
 					</div>
 				</div>
 
@@ -86,21 +60,23 @@
 		</div>
 		<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
 			<div class="ui center vertical icon buttons">
-				<a href="home.html" class="ui teal button">简介</a>
-				<a href="background.html" class="ui teal button">背景</a>
-				<a href="data.html" class="ui teal button">数据集</a>
-				<a href="program.html" class="ui teal button">技术方案</a>
-				<a href="#" class="ui teal button">实现代码</a>
+				<a href="" class="ui teal button" id="toHome">简介</a>
+				<a href="" class="ui teal button" id="toBackground">背景</a>
+				<a href="" class="ui teal button" id="toData">数据集</a>
+				<a href="" class="ui teal button" id="toProgram">技术方案</a>
+				<a href="" class="ui teal button" id="toCode">实现代码</a>
 			</div>
 		</div>
 	</body>
 	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
 	<script src="../lib/prism/prism.js"></script>
 	<script src="../lib/tocbot/tocbot.min.js"></script>
 	<script src="../lib/qrcode/qrcode.min.js"></script>
 	<script src="../lib/waypoints/jquery.waypoints.min.js"></script>
+	<script src="../js/function.js"></script>
 	<script>
 		$('.menu.toggle').click(function() {
 			$('.i-item').toggleClass('i-mobile-hide');
@@ -130,6 +106,63 @@
 				}
 			}
 		});
+
+		$(function() {
+			theme_init();
+		})
+
+		function theme_init() {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/listThemeData",
+				async: false,
+				success: function(res) {
+					if(res.code == 0) {
+						var html = "";
+						for(var i = 0; i < res.data.length; i++) {
+							html = '<div class="item">' +
+								'<a href="../../home.html?theme_id='+res.data[i].id +'" class="ui orange basic circular button">' + res.data[i].theme + '</a>' +
+								'</div>';
+							$("#theme_list").append(html);
+						}
+					} else {
+						propFail(res, null);
+					}
+				}
+			});
+			queryData();
+		}
+
+		function queryData() {
+			var themeId = getQueryVariable("theme_id");
+			//设置跳转链接
+			$('#toHome').attr('href', '../../home.html?theme_id=' + themeId);
+			$('#toBackground').attr('href', 'background.html?theme_id=' + themeId);
+			$('#toData').attr('href', 'data.html?theme_id=' + themeId);
+			$('#toProgram').attr('href', 'program.html?theme_id=' + themeId);
+			$('#toCode').attr('href', 'code.html?theme_id=' + themeId);
+			getDataContent(themeId);
+		}
+
+		function getDataContent(theme_id) {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/getDataContent",
+				data: {
+					'theme_id': theme_id
+				},
+				async: true,
+				success: function(res) {
+					if(res.code == 0) {
+						$('#theme_pic').attr('src', res.data.theme_pic);
+						var html = '<a href="' + res.data.file_addr + '">' + res.data.file_name + '</a>'
+						$('#content').append(html);
+					} else {
+						propFail(res, null);
+					}
+				}
+			});
+		}
 	</script>
 
 </html>

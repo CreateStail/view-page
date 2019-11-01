@@ -5,12 +5,14 @@
 		<meta charset="UTF-8">
 		<title>背景</title>
 		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
 		<link href="../css/typo.css" rel="stylesheet" />
 		<link href="../css/animate.css" rel="stylesheet" />
 		<link href="../lib/prism/prism.css" rel="stylesheet" />
 		<link href="../lib/tocbot/tocbot.css" rel="stylesheet" />
 		<link href="../css/index.css" rel="stylesheet" />
 	</head>
+
 	<body>
 		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
 			<div class="ui container">
@@ -38,70 +40,37 @@
 		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
 			<div class="ui container">
 				<div class="ui top attached segment">
-					<div class="ui horizontal link list">
-						<div class="item">
-							<a href="#" class="active ui orange  circular button">Camelyon16</a>
-						</div>
-						<div class="item">
-							<a href="#" class="ui orange basic circular button">BUS</a>
-						</div>
-						<div class="item">
-							<a href="#" class="ui orange basic circular button">all-mias</a>
-						</div>
+					<div class="ui horizontal link list" id="theme_list">
 					</div>
 				</div>
 				<div class="ui attach segment">
-					<img src="../img/camelyon16.png" class="ui fluid rounded image">
+					<img src="" class="ui fluid rounded image" id="theme_pic">
 				</div>
 				<div class="ui  attached padded segment">
 					<div id="content" class="typo js-toc-content  typo-selection js-toc-content i-padded-lr-responsive i-padded-tb-large">
-						<h3>Program details</h3>
-						<p>The Camelyon16 ISBI challenge event took place on Wednesday, 13 April, 8:30am-12:15am. Challenge participants with the most successful and innovative entries presented their work. The presentations from the organizing team are now available (see below). After the event, the CAMELYON16 submission page is reopened and new submissions were accepted until November 2016. </p>
+
 					</div>
-					<img src="../img/Event.jpg" class="ui image" />
-
-					<table class="ui table">
-						<tr>
-							<td>Title of presentation</td>
-							<td>Presenter</td>
-						</tr>
-						<tr>
-							<td>Camlyon16:Aim,dataset,and evaluation</td>
-							<td>Babak Ehteshami Beinordi</td>
-						</tr>
-						<tr>
-							<td>How computers shape the future of pathology</td>
-							<td>Jeroen van der Laak</td>
-						</tr>
-						<tr>
-							<td>Statistics,Leaderboards,Result and Comparison to Pathologist</td>
-							<td>Babak Ehteshami Bejnordi</td>
-						</tr>
-					</table>
-					<div>
-
-						<img src="../img/Program.png" class="ui image" />
-					</div>
-
 				</div>
 			</div>
 			<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
 				<div class="ui center vertical icon buttons">
-					<a href="home.html" class="ui teal button">简介</a>
-					<a href="background.html" class="ui teal button">背景</a>
-					<a href="background.html" class="ui teal button">数据集</a>
-					<a href="#comment-container" class="ui teal button">技术方案</a>
-					<a href="#comment-container" class="ui teal button">实现代码</a>
+					<a href="" class="ui teal button" id="toHome">简介</a>
+					<a href="" class="ui teal button" id="toBackground">背景</a>
+					<a href="" class="ui teal button" id="toData">数据集</a>
+					<a href="" class="ui teal button" id="toProgram">技术方案</a>
+					<a href="" class="ui teal button" id="toCode">实现代码</a>
 				</div>
 			</div>
 	</body>
 	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
 	<script src="../lib/prism/prism.js"></script>
 	<script src="../lib/tocbot/tocbot.min.js"></script>
 	<script src="../lib/qrcode/qrcode.min.js"></script>
 	<script src="../lib/waypoints/jquery.waypoints.min.js"></script>
+	<script src="../js/function.js"></script>
 	<script>
 		$('.menu.toggle').click(function() {
 			$('.i-item').toggleClass('i-mobile-hide');
@@ -131,6 +100,63 @@
 				}
 			}
 		});
+
+		$(function() {
+			theme_init();
+		})
+
+		function theme_init() {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/listThemeData",
+				async: false,
+				success: function(res) {
+					if(res.code == 0) {
+						var html = "";
+						for(var i = 0; i < res.data.length; i++) {
+							html = '<div class="item">' +
+								'<a href="../../home.html?theme_id='+res.data[i].id +'" class="ui orange basic circular button">' + res.data[i].theme + '</a>' +
+								'</div>';
+							$("#theme_list").append(html);
+						}
+					} else {
+						propFail(res, null);
+					}
+				}
+			});
+			queryProgram();
+		}
+
+		function queryProgram() {
+			var themeId = getQueryVariable("theme_id");
+			//设置跳转链接
+			$('#toHome').attr('href', '../../home.html?theme_id=' + themeId);
+			$('#toBackground').attr('href', 'background.html?theme_id=' + themeId);
+			$('#toData').attr('href', 'data.html?theme_id=' + themeId);
+			$('#toProgram').attr('href', 'program.html?theme_id=' + themeId);
+			$('#toCode').attr('href', 'code.html?theme_id=' + themeId);
+			getProgramContent(themeId);
+		}
+
+		function getProgramContent(theme_id) {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/getProgramContent",
+				data: {
+					'theme_id': theme_id
+				},
+				async: true,
+				success: function(res) {
+					if(res.code == 0) {
+						$('#theme_pic').attr('src', res.data.theme_pic);
+						var html = '<a href="' + res.data.file_addr + '">' + res.data.file_name + '</a>'
+						$('#content').append(html);
+					} else {
+						propFail(res, null);
+					}
+				}
+			});
+		}
 	</script>
 
 </html>

@@ -225,3 +225,7 @@
 .editormd-file-input{
 	margin-left: 0px !important;
 }
+
+#waypoint{
+	min-height: 800px !important;
+}

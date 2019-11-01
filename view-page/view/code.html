@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>背景</title>
+		<title>数据集</title>
 		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
 		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
 		<link href="../css/typo.css" rel="stylesheet" />
@@ -41,7 +41,6 @@
 			<div class="ui container">
 				<div class="ui top attached segment">
 					<div class="ui horizontal link list" id="theme_list">
-
 					</div>
 				</div>
 				<div class="ui attach segment">
@@ -67,6 +66,7 @@
 	</body>
 	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
 	<script src="../lib/prism/prism.js"></script>
 	<script src="../lib/tocbot/tocbot.min.js"></script>
@@ -126,10 +126,10 @@
 					}
 				}
 			});
-			queryBackground();
+			queryCode();
 		}
 
-		function queryBackground() {
+		function queryCode() {
 			var themeId = getQueryVariable("theme_id");
 			//设置跳转链接
 			$('#toHome').attr('href', '../../home.html?theme_id=' + themeId);
@@ -137,13 +137,13 @@
 			$('#toData').attr('href', 'data.html?theme_id=' + themeId);
 			$('#toProgram').attr('href', 'program.html?theme_id=' + themeId);
 			$('#toCode').attr('href', 'code.html?theme_id=' + themeId);
-			getBackgroundContent(themeId);
+			getCodeContent(themeId);
 		}
 
-		function getBackgroundContent(theme_id) {
+		function getCodeContent(theme_id) {
 			$.ajax({
 				type: "post",
-				url: "/view-server/Api/getBackgroundContent",
+				url: "/view-server/Api/getCodeContent",
 				data: {
 					'theme_id': theme_id
 				},
@@ -151,7 +151,8 @@
 				success: function(res) {
 					if(res.code == 0) {
 						$('#theme_pic').attr('src', res.data.theme_pic);
-						$('#content').html(res.data.background_html);
+						var html = '<a href="' + res.data.file_addr + '">' + res.data.file_name + '</a>'
+						$('#content').append(html);
 					} else {
 						propFail(res, null);
 					}

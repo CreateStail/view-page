@@ -5,6 +5,7 @@
 		<meta charset="UTF-8">
 		<title>发布</title>
 		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
 		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
 		<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/css/fileinput.min.css" rel="stylesheet">
@@ -113,6 +114,7 @@
 	</body>
 	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/fileinput.min.js"></script>
 	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/locales/zh.min.js"></script>
@@ -203,7 +205,7 @@
 				count++;
 				$('#theme_code').fileinput('upload');
 			}
-			if(themePic == ''&&themeData==''&&themeProgram==''&&themeCode==''){
+			if(themePic == '' && themeData == '' && themeProgram == '' && themeCode == '') {
 				transform();
 			}
 		})
@@ -211,30 +213,38 @@
 		function transform() {
 			var themeMap = {};
 			themeMap.theme = $('#theme').val().trim();
-			themeMap.themePic_Name = $('#theme_pic').attr('fileName');
-			themeMap.themeData_Name = $('#theme_data').attr('fileName');
-			themeMap.themeProgram_Name = $('#theme_program').attr('fileName');
-			themeMap.themeCode_Name = $('#theme_code').attr('fileName');
-			themeMap.themePic_Path = $('#theme_pic').attr('filePath');
-			themeMap.themeData_Path = $('#theme_data').attr('filePath');
-			themeMap.themeProgram_Path = $('#theme_program').attr('filePath');
-			themeMap.themeCode_Path = $('#theme_code').attr('filePath');
-			themeMap.themePic_Addr = $('#theme_pic').attr('fileAddr');
-			themeMap.themeData_Addr = $('#theme_data').attr('fileAddr');
-			themeMap.themeProgram_Addr = $('#theme_program').attr('fileAddr');
-			themeMap.themeCode_Addr = $('#theme_code').attr('fileAddr');
+			themeMap.themePic_Name = $('#theme_pic').attr('fileName') == undefined ? '' : $('#theme_pic').attr('fileName');
+			themeMap.themeData_Name = $('#theme_data').attr('fileName') == undefined ? '' : $('#theme_data').attr('fileName');
+			themeMap.themeProgram_Name = $('#theme_program').attr('fileName') == undefined ? '' : $('#theme_program').attr('fileName');
+			themeMap.themeCode_Name = $('#theme_code').attr('fileName') == undefined ? '' : $('#theme_code').attr('fileName');
+			themeMap.themePic_Path = $('#theme_pic').attr('filePath') == undefined ? '' : $('#theme_pic').attr('filePath');
+			themeMap.themeData_Path = $('#theme_data').attr('filePath') == undefined ? '' : $('#theme_data').attr('filePath');
+			themeMap.themeProgram_Path = $('#theme_program').attr('filePath') == undefined ? '' : $('#theme_program').attr('filePath');
+			themeMap.themeCode_Path = $('#theme_code').attr('filePath') == undefined ? '' : $('#theme_code').attr('filePath');
+			themeMap.themePic_Addr = $('#theme_pic').attr('fileAddr') == undefined ? '' : $('#theme_pic').attr('fileAddr');
+			themeMap.themeData_Addr = $('#theme_data').attr('fileAddr') == undefined ? '' : $('#theme_data').attr('fileAddr');
+			themeMap.themeProgram_Addr = $('#theme_program').attr('fileAddr') == undefined ? '' : $('#theme_program').attr('fileAddr');
+			themeMap.themeCode_Addr = $('#theme_code').attr('fileAddr') == undefined ? '' : $('#theme_code').attr('fileAddr');
 			themeMap.introduction = introductionEditor.getMarkdown();
 			themeMap.introduction_html = introductionEditor.getHTML();
 			themeMap.background = backgroundEditor.getMarkdown();
 			themeMap.background_html = backgroundEditor.getHTML();
-			console.info(themeMap);
+
 			$.ajax({
 				type: "post",
 				url: "/view-server/Api/saveThemeContent",
 				async: true,
 				data: themeMap,
 				success: function(res) {
-						
+					if(res.code == 0) {
+						propSuccess(res, function() {
+							window.location.href="../../home.html";
+						})
+					} else {
+						propFail(res, function() {
+							window.location.reload();
+						})
+					}
 				}
 			});
 		}
@@ -249,7 +259,7 @@
 				showPreview: true, //展前预览
 				showRemove: true,
 				showCaption: false, //是否显示标题
-				maxFileSize: 3072, //上传文件最大的尺寸kb 3m
+				maxFileSize: 30720, //上传文件最大的尺寸kb 3m
 				dropZoneEnabled: true, //是否显示拖拽区域
 				browseClass: "btn btn-primary", //按钮样式
 				uploadAsync: true, //默认异步上传
