@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>发布</title>
+		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
+		<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/css/fileinput.min.css" rel="stylesheet">
+		<link href="../css/index.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
+			<div class="ui container">
+				<div class="ui inverted secondary stackable menu">
+					<h2 class="ui teal header item">用户注册</h2>
+					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+				</div>
+			</div>
+			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
+				<i class="sidebar icon"></i>
+			</a>
+		</nav>
+		<!--
+        	作者：offline
+        	时间：2019-10-22
+        	描述：内容
+        -->
+		<div class="i-container-small i-padded-tb-massive" style="max-width: 30em !important;">
+			<div class="ui container">
+				<div class="ui large form">
+					<div class="ui segment">
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="user icon"></i>
+								<input type="text" name="username" placeholder="用户名" class="Required" id="username">
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="lock icon"></i>
+								<input type="password" name="password" placeholder="密码" class="Required" id="password">
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="lock icon"></i>
+								<input type="password" name="passwordConfirm" placeholder="确认密码" class="Required" id="passwordConfirm" onblur="checkPassword()">
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="envelope icon"></i>
+								<input type="email" name="email" placeholder="邮箱" class="Required" id="email">
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<i class="phone icon"></i>
+								<input type="text" name="phone" placeholder="手机号" class=" " id="phone">
+							</div>
+						</div>
+
+						<div class="inline fields">
+							<div class="field">
+								<div class="ui radio ">
+									<input type="radio" name="sex" class="hidden" value="0">
+									<label>男</label>
+								</div>
+							</div>
+							<div class="field">
+								<div class="ui radio ">
+									<input type="radio" name="sex" class="hidden" value="1">
+									<label>女</label>
+								</div>
+							</div>
+						</div>
+						<div class="field" style="margin-left: 40px;">
+							<div class="ui left icon input">
+								<input type="file" name="headImg" placeholder="头像" class="" id="headImg">
+							</div>
+						</div>
+						<div class="field">
+							<div class="ui left icon input">
+								<input type="text" id="verifyInput" />
+								<a href="javascript:void(0);" rel="external nofollow" title="点击更换验证码">
+									<img id="imgVerify" src="" alt="更换验证码" height="36" width="100%" onclick="getVerify(this);">
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ui divider"></div>
+				<div class="ui right aligned i-padded-tiny container">
+					<button type="button" id="save-btn" class="ui secondary button">保存</button>
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+	<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/fileinput.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/locales/zh.min.js"></script>
+	<script src="../lib/editormd/editormd.min.js"></script>
+	<script src="../js/function.js"></script>
+	<script>
+		$('.menu.toggle').click(function() {
+			$('.i-item').toggleClass('i-mobile-hide');
+		});
+		var count = 0;
+		$(function() {
+			init();
+		})
+
+		function init() {
+			//上传初始化
+			$('#headImg').fileinput({
+				language: 'zh',
+				uploadUrl: "/view-server/Api/uploadHeadImg",
+				enctype: 'multipart/form-data',
+				showUpload: false, //是否显示上传按钮
+				showPreview: true, //展前预览
+				showRemove: true,
+				showCaption: false, //是否显示标题
+				maxFileSize: 51200, //上传文件最大的尺寸kb 50m
+				dropZoneEnabled: true, //是否显示拖拽区域
+				browseClass: "btn btn-primary", //按钮样式
+				uploadAsync: true, //默认异步上传
+			}).on('fileuploaded', function(event, data, previewId, index) {
+				count--;
+				if(count == 0) {
+					$('#headImg').attr("fileName", data.response.data.fileName);
+					$('#headImg').attr("filePath", data.response.data.filePath);
+					$('#headImg').attr("fileAddr", data.response.data.fileAddr);
+				}
+			})
+			getVerify();
+		}
+
+		function getVerify() {
+			//生成图片验证码
+			$.ajax({
+				type: "get",
+				url: "/view-server/Api/generateValidateCode",
+				async: true,
+				success: function(res) {
+					if(res.code == 0) {
+						$('#imgVerify').attr("src", res.data);
+					}
+				}
+			});
+		}
+
+		//保存
+		$('#save-btn').on('click', function() {
+			if($('#headImg').val().trim() != '') {
+				count++;
+				$('#headImg').fileinput('upload');
+			}
+			transfarData();
+		});
+
+		function checkPassword() {
+			if($('#password').val().trim() != $('#passwordConfirm').val().trim()) {
+				propWarn('两次输入不一致,请重新输入');
+				$('#password').val('');
+				$('#passwordConfirm').val('');
+				return;
+			}
+		}
+
+		function transfarData() {
+			var userMap = {};
+			userMap.username = $('#username').val().trim();
+			userMap.password = $('#password').val().trim();
+			userMap.email = $('#email').val();
+			userMap.phone = $('#phone').val();
+			userMap.sex = $('input[name="sex"]:checked').val();
+			userMap.headImg = $('#headImg').attr('fileAddr');
+			userMap.verifyInput = $('#verifyInput').val();
+			
+			$.ajax({
+				url:'/view-server/Api/saveUser',
+				method:'post',
+				data:userMap,
+				success:function(res){
+					
+				}
+			})
+		}
+	</script>
+
+</html>

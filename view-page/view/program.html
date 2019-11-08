@@ -4,8 +4,8 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>背景</title>
-		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
-		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+		<link href="../css/semantic-ui/semantic.min.css" rel="stylesheet">
+		<link href="../css/layer/layer.css" rel="stylesheet">
 		<link href="../css/typo.css" rel="stylesheet" />
 		<link href="../css/animate.css" rel="stylesheet" />
 		<link href="../lib/prism/prism.css" rel="stylesheet" />
@@ -62,10 +62,10 @@
 				</div>
 			</div>
 	</body>
-	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
-	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
-	<script src="//cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+	<script src="../js/jquery/jquery.min.js"></script>
+	<script src="../js/semantic-ui/semantic.min.js"></script>
+	<script src="../js/all.js"></script>
+	<script src="../js/jquery-scrollto/jquery-scrollto.js"></script>
 	<script src="../lib/prism/prism.js"></script>
 	<script src="../lib/tocbot/tocbot.min.js"></script>
 	<script src="../lib/qrcode/qrcode.min.js"></script>
@@ -115,7 +115,7 @@
 						var html = "";
 						for(var i = 0; i < res.data.length; i++) {
 							html = '<div class="item">' +
-								'<a href="../../home.html?theme_id='+res.data[i].id +'" class="ui orange basic circular button">' + res.data[i].theme + '</a>' +
+								'<a href="../../home.html?theme_id=' + res.data[i].id + '" class="ui orange basic circular button">' + res.data[i].theme + '</a>' +
 								'</div>';
 							$("#theme_list").append(html);
 						}
@@ -148,9 +148,23 @@
 				async: true,
 				success: function(res) {
 					if(res.code == 0) {
-						$('#theme_pic').attr('src', res.data.theme_pic);
-						var html = '<a href="' + res.data.file_addr + '">' + res.data.file_name + '</a>'
-						$('#content').append(html);
+						if(res.data.theme_pic != undefined) {
+							$('#theme_pic').attr('src', res.data.theme_pic);
+							$('#theme_pic').on('error', function() {
+								$('#theme_pic').attr('src', '../img/unkonw.jpg');
+							})
+						} else {
+							$('#theme_pic').attr('src', '../img/unkonw.jpg');
+						}
+						var attachmentList = res.data.attachmentMap;
+						if(attachmentList.length > 0) {
+							var html = "";
+							for(var i = 0; i < attachmentList.length; i++) {
+								html += '<a href="' + attachmentList[i].file_addr + '">' + attachmentList[i].file_name + '</a>' +
+									'<div class="ui divider"></div>'
+							}
+							$('#content').append(html);
+						}
 					} else {
 						propFail(res, null);
 					}

@@ -1,0 +1,1 @@
+document.write("<script src='../js/layer/layer.js'></script>")

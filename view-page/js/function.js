@@ -7,9 +7,11 @@ $(function() {
 			}
 		},
 		complete: function(xhr) {
-			if(xhr.responseJSON.code === -1 && xhr.responseJSON.msg === '请登录') {
-				window.location.href = "login.html";
-			};
+			if(xhr.responseJSON != null) {
+				if(xhr.responseJSON.code === -1 && xhr.responseJSON.msg === '没有此操作权限') {
+					window.location.href = "login.html";
+				};
+			}
 		}
 	});
 })
@@ -55,6 +57,15 @@ function propFail(res, callback) {
 	}, callback)
 }
 
+function propWarn(text,callback){
+		layer.msg(text,{
+		offset: 'rb',
+		icon: 3,
+		area: ['270px', '70px'],
+		time: 3000
+	}, callback)
+}
+
 function propFailText(text, callback) {
 	layer.msg(text, {
 		offset: 'rb',
@@ -81,9 +92,9 @@ function fileUploadPictureInit(ctrlName, uploadUrl) {
 		allowedFileTypes: ['image'],
 		uploadAsync: true, //默认异步上传
 	}).on('fileuoloaded', function(event, data, previewId, index) {
-//		control.attr("fileName", data.data.fileName);
-//		control.attr("filePath", data.data.filePath);
-//		control.attr("fileAddr", data.data.fileAddr);
+		//		control.attr("fileName", data.data.fileName);
+		//		control.attr("filePath", data.data.filePath);
+		//		control.attr("fileAddr", data.data.fileAddr);
 	}).on('filebatchuploadsuccess', function(event, data, previewId, index) { //同步上传回调
 		count--;
 		control.attr("fileName", data.response.data.fileName);
@@ -107,9 +118,9 @@ function fileUploadInit(ctrlName, uploadUrl) {
 		browseClass: "btn btn-primary", //按钮样式
 		uploadAsync: true, //默认异步上传
 	}).on('fileuoloaded', function(event, data, previewId, index) {
-//		control.attr("fileName", data.data.fileName);
-//		control.attr("filePath", data.data.filePath);
-//		control.attr("fileAddr", data.data.fileAddr);
+		//		control.attr("fileName", data.data.fileName);
+		//		control.attr("filePath", data.data.filePath);
+		//		control.attr("fileAddr", data.data.fileAddr);
 	}).on('filebatchuploadsuccess', function(event, data, previewId, index) { //同步上传回调
 		count--;
 		control.attr("fileName", data.response.data.fileName);

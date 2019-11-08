@@ -4,11 +4,11 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>发布</title>
-		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
-		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+		<link href="../css/semantic-ui/semantic.min.css" rel="stylesheet">
+		<link href="../css/layer/layer.css" rel="stylesheet">
 		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
-		<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-		<link href="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/css/fileinput.min.css" rel="stylesheet">
+		<link href="../css/bootstrap/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/bootstrap-fileinput/fileinput.min.css" rel="stylesheet">
 		<link href="../css/index.css" rel="stylesheet" />
 	</head>
 
@@ -101,8 +101,19 @@
 									<input type="file" id="theme_code" name="file" />
 								</div>
 						</div>
+						<div>
+							<span style="color: red;">***如果资料已存在,请下载模板</span>
+							<a href="http://localhost/view-server/static/usr/local/src/view-service/templete/uploadFileTemplete.xlsx" class="ui blue button">
+								点击下载模板
+							</a>
+						</div>
+						<div>
+							<label class="ui lable">模板上传</label>
+							<input type="file" id="templeteUpload" />
+						</div>
 					</div>
 			</div>
+			<div class="ui divider"></div>
 			<div class="ui right aligned container">
 				<button type="button" class="ui button" onclick="window.history.go(-1)">返回</button>
 				<button type="button" id="save-btn" class="ui secondary button">保存</button>
@@ -112,12 +123,12 @@
 		</div>
 		</div>
 	</body>
-	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
-	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
-	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
-	<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/fileinput.min.js"></script>
-	<script src="https://cdn.bootcss.com/bootstrap-fileinput/5.0.6/js/locales/zh.min.js"></script>
+	<script src="../js/jquery/jquery.min.js"></script>
+	<script src="../js/semantic-ui/semantic.min.js"></script>
+	<script src="../js/all.js"></script>
+	<script src="../js/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="../js/bootstrap-fileinput/fileinput.min.js"></script>
+	<script src="../js/bootstrap-fileinput/zh.js"></script>
 	<script src="../lib/editormd/editormd.min.js"></script>
 	<script src="../js/function.js"></script>
 	<script>
@@ -160,28 +171,6 @@
 				/**设置主题颜色*/
 				theme: "gray",
 			});
-
-			/*			contentEditor = editormd("data-content", {
-							width: "100%",
-							height: 640,
-							syncScrolling: "single",
-							path: "../lib/editormd/lib/"
-						});
-
-						contentEditor = editormd("program-content", {
-							width: "100%",
-							height: 640,
-							syncScrolling: "single",
-							path: "../lib/editormd/lib/"
-						});
-
-						contentEditor = editormd("code-content", {
-							width: "100%",
-							height: 640,
-							syncScrolling: "single",
-							path: "../lib/editormd/lib/"
-						});*/
-
 		});
 
 		$('#save-btn').on('click', function() {
@@ -213,6 +202,10 @@
 		function transform() {
 			var themeMap = {};
 			themeMap.theme = $('#theme').val().trim();
+			if(themeMap.theme == ''){
+				propWarn("主题名称不能为空",null);
+				return;
+			}
 			themeMap.themePic_Name = $('#theme_pic').attr('fileName') == undefined ? '' : $('#theme_pic').attr('fileName');
 			themeMap.themeData_Name = $('#theme_data').attr('fileName') == undefined ? '' : $('#theme_data').attr('fileName');
 			themeMap.themeProgram_Name = $('#theme_program').attr('fileName') == undefined ? '' : $('#theme_program').attr('fileName');
@@ -230,23 +223,47 @@
 			themeMap.background = backgroundEditor.getMarkdown();
 			themeMap.background_html = backgroundEditor.getHTML();
 
+			/*			$.ajax({
+							type: "post",
+							url: "/view-server/Api/saveThemeContent",
+							async: true,
+							data: themeMap,
+							success: function(res) {
+								if(res.code == 0) {
+									propSuccess(res, function() {
+										window.location.href="../../home.html";
+									})
+								} else {
+									propFail(res, function() {
+										window.location.reload();
+									})
+								}
+							}
+						});*/
+			var formData = new FormData();
+			for(var key in themeMap) {
+				formData.append(key, themeMap[key]);
+			}
+			formData.append("templeteFile", $('#templeteUpload')[0].files[0]);
 			$.ajax({
 				type: "post",
 				url: "/view-server/Api/saveThemeContent",
 				async: true,
-				data: themeMap,
+				data: formData,
+//				contentType: "multipart/form-data",
+				// 告诉jQuery不要去处理发送的数据
+				processData: false,
+				// 告诉jQuery不要去设置Content-Type请求头
+				contentType: false,
 				success: function(res) {
-					if(res.code == 0) {
-						propSuccess(res, function() {
-							window.location.href="../../home.html";
-						})
-					} else {
-						propFail(res, function() {
+					if(res.code == 0){
+						propSuccess(res,function(){
 							window.location.reload();
 						})
 					}
 				}
 			});
+
 		}
 
 		function fileInit(ctrlName, uploadUrl) {
@@ -259,7 +276,7 @@
 				showPreview: true, //展前预览
 				showRemove: true,
 				showCaption: false, //是否显示标题
-				maxFileSize: 30720, //上传文件最大的尺寸kb 3m
+				maxFileSize: 51200, //上传文件最大的尺寸kb 50m
 				dropZoneEnabled: true, //是否显示拖拽区域
 				browseClass: "btn btn-primary", //按钮样式
 				uploadAsync: true, //默认异步上传
