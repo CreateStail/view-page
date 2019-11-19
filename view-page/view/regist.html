@@ -139,6 +139,7 @@
 					$('#headImg').attr("fileName", data.response.data.fileName);
 					$('#headImg').attr("filePath", data.response.data.filePath);
 					$('#headImg').attr("fileAddr", data.response.data.fileAddr);
+					transfarData();
 				}
 			})
 			getVerify();
@@ -163,8 +164,9 @@
 			if($('#headImg').val().trim() != '') {
 				count++;
 				$('#headImg').fileinput('upload');
+			} else {
+				transfarData();
 			}
-			transfarData();
 		});
 
 		function checkPassword() {
@@ -183,15 +185,23 @@
 			userMap.email = $('#email').val();
 			userMap.phone = $('#phone').val();
 			userMap.sex = $('input[name="sex"]:checked').val();
-			userMap.headImg = $('#headImg').attr('fileAddr');
+			userMap.headImg = $('#headImg').attr('fileaddr');
 			userMap.verifyInput = $('#verifyInput').val();
-			
+
 			$.ajax({
-				url:'/view-server/Api/saveUser',
-				method:'post',
-				data:userMap,
-				success:function(res){
-					
+				url: '/view-server/Api/saveUser',
+				method: 'post',
+				data: userMap,
+				success: function(res) {
+					if(res.code == 0) {
+						propSuccess(res.msg, function() {
+							window.location.href = "login.html";
+						})
+					} else {
+						propFail(res.msg, function() {
+
+						})
+					}
 				}
 			})
 		}

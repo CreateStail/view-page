@@ -17,15 +17,15 @@
 			<div class="ui container">
 				<div class="ui inverted secondary stackable menu">
 					<h2 class="ui teal header item">文章</h2>
-					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+					<a href="../../home.html" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
 					<div class="right menu i-item i-mobile-hide" id="loginedDiv">
-						<div class="ui dropdown item">
+						<div class="ui dropdown item userInfo" id="userInfo">
 							<div class="text">
-								<img class="ui avatar image" src="../static/img/avatar.png" /> 李仁密
+								<img class="ui avatar image" src="" id="headImg" />
 							</div>
 							<i class="dropdown icon"></i>
-							<div class="menu">
-								<a class="item" id="logout">注销</a>
+							<div class="menu" id="loginMenu">
+								<div class="item">注销</div>
 							</div>
 						</div>
 					</div>
@@ -38,8 +38,8 @@
 		<div class="ui attached pointing menu">
 			<div class="ui container">
 				<div class="right menu">
-					<a href="#" class=" teal active item">发布</a>
-					<a href="#" class=" item">列表</a>
+					<a href="view-input.html?type=add" class=" teal active item">发布</a>
+					<a href="view-list.html" class=" item">列表</a>
 				</div>
 			</div>
 		</div>
@@ -48,7 +48,7 @@
         	时间：2019-10-22
         	描述：内容
         -->
-		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
+		<div class="i-padded-tb-big i-container-small  fadeIn" id="waypoint">
 			<div class="ui container">
 				<form class="ui form">
 					<div>
@@ -64,6 +64,9 @@
 							</div>
 							<div>
 								<input type="file" id="theme_pic" name="file" />
+							</div>
+							<div class="ui horizontal list editDiv" id="themeFileDiv">
+
 							</div>
 						</div>
 						<div>
@@ -85,6 +88,9 @@
 									<input type="file" id="theme_data" name="file" />
 								</div>
 							</div>
+							<div class="ui horizontal list editDiv" id="dataFileDiv">
+
+							</div>
 						</div>
 						<div>
 							<h2 class="ui header">技术方案</h2>
@@ -93,6 +99,9 @@
 									<input type="file" id="theme_program" name="file" />
 								</div>
 							</div>
+							<div class="ui horizontal list editDiv" id="programFileDiv">
+
+							</div>
 						</div>
 						<div>
 							<h2 class="ui header">实现代码</h2>
@@ -100,10 +109,13 @@
 								<div>
 									<input type="file" id="theme_code" name="file" />
 								</div>
+								<div class="ui horizontal list editDiv" id="codeFileDiv">
+
+								</div>
 						</div>
 						<div>
 							<span style="color: red;">***如果资料已存在,请下载模板</span>
-							<a href="http://localhost/view-server/static/usr/local/src/view-service/templete/uploadFileTemplete.xlsx" class="ui blue button">
+							<a class="ui blue button" id="templete">
 								点击下载模板
 							</a>
 						</div>
@@ -123,21 +135,34 @@
 		</div>
 		</div>
 	</body>
-	<script src="../js/jquery/jquery.min.js"></script>
+	<script src="../js/jquery/jquery1.11.3.js"></script>
 	<script src="../js/semantic-ui/semantic.min.js"></script>
-	<script src="../js/all.js"></script>
-	<script src="../js/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="../js/bootstrap/bootstrap.min.js"></script>
 	<script src="../js/bootstrap-fileinput/fileinput.min.js"></script>
 	<script src="../js/bootstrap-fileinput/zh.js"></script>
-	<script src="../lib/editormd/editormd.min.js"></script>
+	<script src="../lib/editormd/editormd.js"></script>
+	<script src="../js/all.js"></script>
 	<script src="../js/function.js"></script>
 	<script>
 		$('.menu.toggle').click(function() {
 			$('.i-item').toggleClass('i-mobile-hide');
 		});
 		var count = 0;
+		var business_ids = {};
+		var pageType = getQueryVariable('type');
 		$(function() {
+			
+			$('#templete').attr('href', window.location.host + "/view-server/static/usr/local/src/view-service/attachment/templete/uploadFileTemplete.xlsx")
+			$('#headImg').attr('src', getCookie('headImg'));
+			$('#headImg').after(getCookie('userName'));
+			if(pageType === 'add') {
+				contentInit();
+			} else if(pageType === 'edit') {
+				getThemeDetails(getQueryVariable('id'));
+			}
+		});
 
+		function contentInit() {
 			fileInit('theme_pic', '/view-server/Api/upload')
 			fileInit('theme_data', '/view-server/Api/upload')
 			fileInit('theme_program', '/view-server/Api/upload')
@@ -171,8 +196,48 @@
 				/**设置主题颜色*/
 				theme: "gray",
 			});
-		});
+		}
 
+		function contentEdit(data) {
+			fileInit('theme_pic', '/view-server/Api/upload')
+			fileInit('theme_data', '/view-server/Api/upload')
+			fileInit('theme_program', '/view-server/Api/upload')
+			fileInit('theme_code', '/view-server/Api/upload')
+			introductionEditor = editormd("introduction-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+				onload: function() {}
+			});
+
+			backgroundEditor = editormd("background-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+				onload: function() {
+					introductionEditor.setMarkdown(data.theme.introduction_content);
+					backgroundEditor.setMarkdown(data.background.background_content);
+				}
+			});
+		}
 		$('#save-btn').on('click', function() {
 			var themePic = $('#theme_pic').val().trim();
 			if(themePic != '') {
@@ -202,8 +267,8 @@
 		function transform() {
 			var themeMap = {};
 			themeMap.theme = $('#theme').val().trim();
-			if(themeMap.theme == ''){
-				propWarn("主题名称不能为空",null);
+			if(themeMap.theme == '') {
+				propWarn("主题名称不能为空", null);
 				return;
 			}
 			themeMap.themePic_Name = $('#theme_pic').attr('fileName') == undefined ? '' : $('#theme_pic').attr('fileName');
@@ -222,24 +287,11 @@
 			themeMap.introduction_html = introductionEditor.getHTML();
 			themeMap.background = backgroundEditor.getMarkdown();
 			themeMap.background_html = backgroundEditor.getHTML();
-
-			/*			$.ajax({
-							type: "post",
-							url: "/view-server/Api/saveThemeContent",
-							async: true,
-							data: themeMap,
-							success: function(res) {
-								if(res.code == 0) {
-									propSuccess(res, function() {
-										window.location.href="../../home.html";
-									})
-								} else {
-									propFail(res, function() {
-										window.location.reload();
-									})
-								}
-							}
-						});*/
+			themeMap.pageType = pageType;
+			if(pageType == 'edit'){
+				themeMap.theme_id = getQueryVariable('id');
+				themeMap.business_ids = JSON.stringify(business_ids);
+			}
 			var formData = new FormData();
 			for(var key in themeMap) {
 				formData.append(key, themeMap[key]);
@@ -247,17 +299,18 @@
 			formData.append("templeteFile", $('#templeteUpload')[0].files[0]);
 			$.ajax({
 				type: "post",
-				url: "/view-server/Api/saveThemeContent",
+				url: "/view-server/Api/View/saveThemeContent",
 				async: true,
 				data: formData,
-//				contentType: "multipart/form-data",
+				dataType: 'json',
+				//contentType: "multipart/form-data",
 				// 告诉jQuery不要去处理发送的数据
 				processData: false,
 				// 告诉jQuery不要去设置Content-Type请求头
 				contentType: false,
 				success: function(res) {
-					if(res.code == 0){
-						propSuccess(res,function(){
+					if(res.code == 0) {
+						propSuccess(res, function() {
 							window.location.reload();
 						})
 					}
@@ -296,6 +349,80 @@
 				if(count == 0) {
 					transform();
 				}
+			});
+		}
+
+		$('#userInfo').mouseenter(function() {
+			$('#loginMenu').show();
+		})
+		$('#loginMenu').mouseleave(function() {
+			$('#loginMenu').hide();
+		})
+
+		function getThemeDetails(id) {
+			$.ajax({
+				url: "/view-server/Api/View/getThemeDetails",
+				type: "post",
+				data: {
+					'themeId': id
+				},
+				success: function(res) {
+					if(res.code == 0) {
+						var data = res.data;
+						business_ids.background_id = data.background.id;
+						business_ids.program_id = data.program.id;
+						business_ids.data_id = data.data.id;
+						business_ids.code_id = data.code.id;
+						contentEdit(data);
+						$('#theme').val(data.theme.theme);
+						if(data.file.length > 0) {
+							for(var i = 0; i < data.file.length; i++) {
+								if(data.file[i].business_name == '主题图片') {
+									$('#themeFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '数据集') {
+									$('#dataFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '技术方案') {
+									$('#programFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '实现代码') {
+									$('#codeFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								}
+							}
+						}
+					}
+				}
+			})
+		}
+
+
+		function delSignFile(id, i) {
+			confirmLayer(id,i);
+		}
+
+		function confirmLayer(id,i) {
+			layer.open({
+				offset: 'auto',
+				content: '确认删除吗?',
+				btn: ['确认', '关闭'],
+				yes: function(index, layero) {
+					$.ajax({
+						type: "post",
+						url: "/view-server/Api/View/delFile",
+						async: true,
+						data: {
+							'id': id
+						},
+						success: function(res) {
+							if(res.code == 0) {
+								$(i).parent().remove();
+							}
+						}
+					});
+					layer.closeAll();
+				},
+				btn2: function(index, layero) {
+					layer.close();
+				},
+				shade: 0,
 			});
 		}
 	</script>

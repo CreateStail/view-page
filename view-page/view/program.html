@@ -18,11 +18,16 @@
 			<div class="ui container">
 				<div class="ui inverted secondary stackable menu">
 					<h2 class="ui teal header item">文章</h2>
-					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
-					<div class="i-item right item i-mobile-hide">
-						<div class="ui icon inverted transparent input">
-							<input type="text" placeholder="Search...">
-							<i class="search link icon"></i>
+					<a href="../../home.html" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+					<div class="right menu i-item i-mobile-hide" id="loginedDiv">
+						<div class="ui dropdown item userInfo" id="userInfo">
+							<div class="text">
+								<img class="ui avatar image" src="" id="headImg" />
+							</div>
+							<i class="dropdown icon"></i>
+							<div class="menu" id="loginMenu">
+								<div class="item">注销</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -102,13 +107,15 @@
 		});
 
 		$(function() {
+			$('#headImg').attr('src',getCookie('headImg'));
+			$('#headImg').after(getCookie('userName'));
 			theme_init();
 		})
 
 		function theme_init() {
 			$.ajax({
 				type: "post",
-				url: "/view-server/Api/listThemeData",
+				url: "/view-server/Api/View/listThemeData",
 				async: false,
 				success: function(res) {
 					if(res.code == 0) {
@@ -141,7 +148,7 @@
 		function getProgramContent(theme_id) {
 			$.ajax({
 				type: "post",
-				url: "/view-server/Api/getProgramContent",
+				url: "/view-server/Api/View/getProgramContent",
 				data: {
 					'theme_id': theme_id
 				},
@@ -166,11 +173,18 @@
 							$('#content').append(html);
 						}
 					} else {
+						$('#theme_pic').attr('src', 'view-page/img/unkonw.jpg');
 						propFail(res, null);
 					}
 				}
 			});
 		}
+		$('#userInfo').mouseenter(function(){
+			$('#loginMenu').show();
+		})
+		$('#loginMenu').mouseleave(function(){
+			$('#loginMenu').hide();
+		})
 	</script>
 
 </html>

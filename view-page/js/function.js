@@ -7,8 +7,9 @@ $(function() {
 			}
 		},
 		complete: function(xhr) {
-			if(xhr.responseJSON != null) {
-				if(xhr.responseJSON.code === -1 && xhr.responseJSON.msg === '没有此操作权限') {
+			var info = JSON.parse(xhr.responseText);
+			if(info != null || info != undefined) {
+				if(info.code === -1 && info.msg === '没有此操作权限') {
 					window.location.href = "login.html";
 				};
 			}
@@ -57,8 +58,8 @@ function propFail(res, callback) {
 	}, callback)
 }
 
-function propWarn(text,callback){
-		layer.msg(text,{
+function propWarn(text, callback) {
+	layer.msg(text, {
 		offset: 'rb',
 		icon: 3,
 		area: ['270px', '70px'],
@@ -128,3 +129,36 @@ function fileUploadInit(ctrlName, uploadUrl) {
 		control.attr("fileAddr", data.response.data.fileAddr);
 	});
 }
+
+function getCookie(key) {
+	var val = "";
+	// 对cookie操作
+	var cookies = document.cookie;
+	cookies = cookies.replace(/\s/, "");
+	var cookie_array = cookies.split(";");
+	for(i = 0; i < cookie_array.length; i++) {
+		// yh_mch=lilei
+		var cookie = cookie_array[i];
+		var array = cookie.split("=");
+		if(array[0] == key) {
+			val = array[1];
+		}
+	}
+	return val;
+}
+
+/*function confirmLayer(confirm){
+	layer.open({
+		offset:'auto',
+		content:'确认删除吗?',
+		btn:['确认','关闭'],
+		yes:function(index,layero){
+			confirm;
+			layer.closeAll();
+		},
+		btn2:function(index,layero){
+			layer.close();
+		},
+		shade:0,
+	});
+}*/
