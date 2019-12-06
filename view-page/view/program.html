@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>背景</title>
+		<title>技术方案</title>
 		<link href="../css/semantic-ui/semantic.min.css" rel="stylesheet">
 		<link href="../css/layer/layer.css" rel="stylesheet">
 		<link href="../css/typo.css" rel="stylesheet" />
@@ -14,28 +14,10 @@
 	</head>
 
 	<body>
-		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
-			<div class="ui container">
-				<div class="ui inverted secondary stackable menu">
-					<h2 class="ui teal header item">文章</h2>
-					<a href="../../home.html" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
-					<div class="right menu i-item i-mobile-hide" id="loginedDiv">
-						<div class="ui dropdown item userInfo" id="userInfo">
-							<div class="text">
-								<img class="ui avatar image" src="" id="headImg" />
-							</div>
-							<i class="dropdown icon"></i>
-							<div class="menu" id="loginMenu">
-								<div class="item">注销</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
-				<i class="sidebar icon"></i>
-			</a>
-		</nav>
+		<div id="head">
+
+		</div>
+
 		<!--
         	作者：offline
         	时间：2019-10-22
@@ -43,21 +25,27 @@
         -->
 
 		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
-			<div class="ui container">
-				<div class="ui top attached segment">
-					<div class="ui horizontal link list" id="theme_list">
+			<div class="ui segment">
+				<div class="ui container">
+					<div class="ui top attached segment">
+						<div class="ui horizontal link list" id="theme_list">
+						</div>
 					</div>
-				</div>
-				<div class="ui attach segment">
-					<img src="" class="ui fluid rounded image" id="theme_pic">
-				</div>
-				<div class="ui  attached padded segment">
-					<div id="content" class="typo js-toc-content  typo-selection js-toc-content i-padded-lr-responsive i-padded-tb-large">
+					<div class="ui attach segment">
+						<img src="" class="ui fluid rounded image" id="theme_pic">
+					</div>
+					<div class="ui  attached padded segment">
+						<div id="content" class="typo js-toc-content  typo-selection js-toc-content i-padded-lr-responsive i-padded-tb-large">
+
+						</div>
+					</div>
+					<div id="toolbar">
 
 					</div>
 				</div>
 			</div>
-			<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
+
+			<!--			<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
 				<div class="ui center vertical icon buttons">
 					<a href="" class="ui teal button" id="toHome">简介</a>
 					<a href="" class="ui teal button" id="toBackground">背景</a>
@@ -65,7 +53,7 @@
 					<a href="" class="ui teal button" id="toProgram">技术方案</a>
 					<a href="" class="ui teal button" id="toCode">实现代码</a>
 				</div>
-			</div>
+			</div>-->
 	</body>
 	<script src="../js/jquery/jquery.min.js"></script>
 	<script src="../js/semantic-ui/semantic.min.js"></script>
@@ -92,23 +80,12 @@
 			contentSelector: '.js-toc-content',
 			headingSelector: 'h1,h2,h3'
 		});
-		/**
-		 * 滚动检测
-		 */
-		var waypoint = new Waypoint({
-			element: document.getElementById('waypoint'),
-			handler: function(direction) {
-				if(direction == 'down') {
-					$("#toolbar").show();
-				} else {
-					$("#toolbar").hide();
-				}
-			}
-		});
 
 		$(function() {
-			$('#headImg').attr('src',getCookie('headImg'));
-			$('#headImg').after(getCookie('userName'));
+			$('#head').load('../common/head.html');
+			$('#toolbar').load('../common/toolbar.html', null, function() {
+				$('#toProgram').addClass('active teal');
+			});
 			theme_init();
 		})
 
@@ -121,8 +98,14 @@
 					if(res.code == 0) {
 						var html = "";
 						for(var i = 0; i < res.data.length; i++) {
-							html = '<div class="item">' +
-								'<a href="../../home.html?theme_id=' + res.data[i].id + '" class="ui orange basic circular button">' + res.data[i].theme + '</a>' +
+							var themeName = "";
+							if(res.data[i].theme.length > 10) {
+								themeName = res.data[i].theme.substr(0, 10) + "...";
+							} else {
+								themeName = res.data[i].theme
+							}
+							html = '<div class="item i-box-hw">' +
+								'<a href="program.html?theme_id=' + res.data[i].id + '" class="ui orange basic circular button fluid" data-tooltip="'+res.data[i].theme+'" data-position="top center"  data-variation="wide">' + themeName + '</a>' +
 								'</div>';
 							$("#theme_list").append(html);
 						}
@@ -136,12 +119,6 @@
 
 		function queryProgram() {
 			var themeId = getQueryVariable("theme_id");
-			//设置跳转链接
-			$('#toHome').attr('href', '../../home.html?theme_id=' + themeId);
-			$('#toBackground').attr('href', 'background.html?theme_id=' + themeId);
-			$('#toData').attr('href', 'data.html?theme_id=' + themeId);
-			$('#toProgram').attr('href', 'program.html?theme_id=' + themeId);
-			$('#toCode').attr('href', 'code.html?theme_id=' + themeId);
 			getProgramContent(themeId);
 		}
 
@@ -179,10 +156,10 @@
 				}
 			});
 		}
-		$('#userInfo').mouseenter(function(){
+		$('#userInfo').mouseenter(function() {
 			$('#loginMenu').show();
 		})
-		$('#loginMenu').mouseleave(function(){
+		$('#loginMenu').mouseleave(function() {
 			$('#loginMenu').hide();
 		})
 	</script>

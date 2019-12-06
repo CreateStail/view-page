@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>列表</title>
+		<title>用户管理</title>
 		<link href="../css/semantic-ui/semantic.min.css" rel="stylesheet">
 		<link href="../css/layer/layer.css" rel="stylesheet">
 		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
@@ -13,18 +13,19 @@
 
 	<body>
 		<div id="head"></div>
+
 		<div class="ui attached pointing menu">
 			<div class="ui container">
 				<div class="right menu">
-					<a href="view-input.html?type=add" class="   item">发布</a>
-					<a href="view-list.html" class="teal active item">列表</a>
+					<a href="usermanager-list.html" class="teal active item">列表</a>
+					<a href="regist.html?type=add" class="item">注册</a>
 				</div>
 			</div>
 		</div>
 		<div class="i-padded-tb-big i-container-small  fadeIn">
 			<div class="ui container">
 				<div class="ui table">
-					<table id="viewList"></table>
+					<table id="userList"></table>
 				</div>
 			</div>
 		</div>
@@ -40,13 +41,13 @@
 
 	<script>
 		$(function() {
-			$('#head').load('../common/head.html');
-			viewTable();
+			$('#head').load("../common/head.html");
+			userTable();
 		})
 
-		function viewTable() {
-			$("#viewList").bootstrapTable({
-				url: '/view-server/Api/View/listView',
+		function userTable() {
+			$("#userList").bootstrapTable({
+				url: '/view-server/Api/listUser',
 				method: 'get',
 				contentType: 'application/json',
 				sidePagination: 'server',
@@ -87,24 +88,41 @@
 						}
 					},
 					{
-						title: "主题名称",
-						align: "center",
-						field: "theme",
-					},
-					{
 						title: "用户名",
 						align: "center",
-						field: "user_name",
+						field: "name",
+					},
+					{
+						title: "电话",
+						align: "center",
+						field: "phone",
 
 					},
 					{
-						title: "创建时间",
+						title: "邮箱",
 						align: "center",
-						field: "create_time",
+						field: "email",
 						sortable: true,
 					},
 					{
-						title: "更新时间",
+						title: "性别",
+						align: "center",
+						field: "sex",
+						formatter:function(value,row,index){
+							if(value == '0'){
+								return '男';
+							}else if(value == '1'){
+								return '女';
+							}
+						}
+					},
+					{
+						title: "新增时间",
+						align: "center",
+						field: "create_time"
+					},
+					{
+						title: "修改时间",
 						align: "center",
 						field: "update_time"
 					},
@@ -156,7 +174,6 @@
 				shade: 0,
 			})
 		}
-		
 	</script>
 
 </html>

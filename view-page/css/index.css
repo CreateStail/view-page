@@ -66,6 +66,10 @@
 	padding-right: 0.5em !important;
 }
 
+.i-padded-l-big{
+	padding-left: 3.5em !important;
+}
+
 
 /*----------text-----------*/
 
@@ -245,3 +249,10 @@
 	width: 810px;
 	height: 235px;
 }
+
+.i-box-hw{
+	width: 10em !important;
+	height: 3em !important;
+}
+
+

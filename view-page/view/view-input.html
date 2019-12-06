@@ -13,28 +13,8 @@
 	</head>
 
 	<body>
-		<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
-			<div class="ui container">
-				<div class="ui inverted secondary stackable menu">
-					<h2 class="ui teal header item">文章</h2>
-					<a href="../../home.html" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
-					<div class="right menu i-item i-mobile-hide" id="loginedDiv">
-						<div class="ui dropdown item userInfo" id="userInfo">
-							<div class="text">
-								<img class="ui avatar image" src="" id="headImg" />
-							</div>
-							<i class="dropdown icon"></i>
-							<div class="menu" id="loginMenu">
-								<div class="item">注销</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
-				<i class="sidebar icon"></i>
-			</a>
-		</nav>
+		<div id="head">
+		</div>	
 		<div class="ui attached pointing menu">
 			<div class="ui container">
 				<div class="right menu">
@@ -151,10 +131,8 @@
 		var business_ids = {};
 		var pageType = getQueryVariable('type');
 		$(function() {
-			
-			$('#templete').attr('href', window.location.host + "/view-server/static/usr/local/src/view-service/attachment/templete/uploadFileTemplete.xlsx")
-			$('#headImg').attr('src', getCookie('headImg'));
-			$('#headImg').after(getCookie('userName'));
+			$('#head').load('../common/head.html');
+			$('#templete').attr('href',"http://"+window.location.host + "/view-server/static/usr/local/src/view-service/attachment/templete/uploadFileTemplete.xlsx");
 			if(pageType === 'add') {
 				contentInit();
 			} else if(pageType === 'edit') {
@@ -352,12 +330,6 @@
 			});
 		}
 
-		$('#userInfo').mouseenter(function() {
-			$('#loginMenu').show();
-		})
-		$('#loginMenu').mouseleave(function() {
-			$('#loginMenu').hide();
-		})
 
 		function getThemeDetails(id) {
 			$.ajax({

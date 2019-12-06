@@ -15,6 +15,7 @@ $(function() {
 			}
 		}
 	});
+
 })
 
 function getQueryVariable(variable) {
@@ -140,7 +141,7 @@ function getCookie(key) {
 		// yh_mch=lilei
 		var cookie = cookie_array[i];
 		var array = cookie.split("=");
-		if(array[0] == key) {
+		if(array[0].trim() == key) {
 			val = array[1];
 		}
 	}
