@@ -55,7 +55,10 @@
 			var data = {};
 			data.username = $('#username').val().trim();
 			data.password = $('#password').val().trim();
-			checkRequired(data);
+			var r = checkRequired(data);
+			if(!r){
+				return false;
+			}
 			$.ajax({
 				url: '/view-server/Api/login',
 				method: 'post',

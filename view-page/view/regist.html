@@ -17,7 +17,7 @@
 			<div class="ui container">
 				<div class="ui inverted secondary stackable menu">
 					<h2 class="ui teal header item">用户注册</h2>
-					<a href="#" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+					<a href="../../home.html" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
 				</div>
 			</div>
 			<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
@@ -92,6 +92,7 @@
 							</div>
 						</div>
 					</div>
+					<div class="ui mini negative message" style="display: none;" id="checkForm">请检查必填项</div>
 				</div>
 
 				<div class="ui divider"></div>
@@ -115,33 +116,67 @@
 			$('.i-item').toggleClass('i-mobile-hide');
 		});
 		var count = 0;
+		var pageType = getQueryVariable('type');
 		$(function() {
-			init();
+			if(pageType == 'add') {
+				init();
+			} else if(pageType == 'edit') {
+				var user_id = getQueryVariable('id');
+				var userInfo = getUserInfoById(user_id);
+				init(userInfo);
+			}
 		})
 
-		function init() {
+		function init(userInfo) {
 			//上传初始化
-			$('#headImg').fileinput({
-				language: 'zh',
-				uploadUrl: "/view-server/Api/uploadHeadImg",
-				enctype: 'multipart/form-data',
-				showUpload: false, //是否显示上传按钮
-				showPreview: true, //展前预览
-				showRemove: true,
-				showCaption: false, //是否显示标题
-				maxFileSize: 51200, //上传文件最大的尺寸kb 50m
-				dropZoneEnabled: true, //是否显示拖拽区域
-				browseClass: "btn btn-primary", //按钮样式
-				uploadAsync: true, //默认异步上传
-			}).on('fileuploaded', function(event, data, previewId, index) {
-				count--;
-				if(count == 0) {
-					$('#headImg').attr("fileName", data.response.data.fileName);
-					$('#headImg').attr("filePath", data.response.data.filePath);
-					$('#headImg').attr("fileAddr", data.response.data.fileAddr);
-					transfarData();
-				}
-			})
+			if(pageType == 'add') {
+				$('#headImg').fileinput({
+					language: 'zh',
+					uploadUrl: "/view-server/Api/uploadHeadImg",
+					enctype: 'multipart/form-data',
+					showUpload: false, //是否显示上传按钮
+					showPreview: true, //展前预览
+					showRemove: true,
+					showCaption: false, //是否显示标题
+					maxFileSize: 51200, //上传文件最大的尺寸kb 50m
+					dropZoneEnabled: true, //是否显示拖拽区域
+					browseClass: "btn btn-primary", //按钮样式
+					uploadAsync: true, //默认异步上传
+				}).on('fileuploaded', function(event, data, previewId, index) {
+					count--;
+					if(count == 0) {
+						$('#headImg').attr("fileName", data.response.data.fileName);
+						$('#headImg').attr("filePath", data.response.data.filePath);
+						$('#headImg').attr("fileAddr", data.response.data.fileAddr);
+						transfarData();
+					}
+				})
+			}
+			if(pageType == 'edit') {
+				$('#headImg').fileinput({
+					language: 'zh',
+					uploadUrl: "/view-server/Api/uploadHeadImg",
+					enctype: 'multipart/form-data',
+					showUpload: false, //是否显示上传按钮
+					showPreview: true, //展前预览
+					showRemove: true,
+					showCaption: false, //是否显示标题
+					maxFileSize: 51200, //上传文件最大的尺寸kb 50m
+					dropZoneEnabled: true, //是否显示拖拽区域
+					browseClass: "btn btn-primary", //按钮样式
+					uploadAsync: true, //默认异步上传
+					initialPreview: ['<img src=' + userInfo.headImg + '>']
+				}).on('fileuploaded', function(event, data, previewId, index) {
+					count--;
+					if(count == 0) {
+						$('#headImg').attr("fileName", data.response.data.fileName);
+						$('#headImg').attr("filePath", data.response.data.filePath);
+						$('#headImg').attr("fileAddr", data.response.data.fileAddr);
+						transfarData();
+					}
+				})
+			}
+
 			getVerify();
 		}
 
@@ -187,23 +222,56 @@
 			userMap.sex = $('input[name="sex"]:checked').val();
 			userMap.headImg = $('#headImg').attr('fileaddr');
 			userMap.verifyInput = $('#verifyInput').val();
-
+			userMap.pageType = pageType;
+			if(pageType == 'edit') {
+				userMap.id = getQueryVariable("id");
+			}
+			var r = checkRequired(userMap);
+			if(!r){
+				return false;
+			}
 			$.ajax({
-				url: '/view-server/Api/saveUser',
+				url: '/view-server/Api/saveOrupdateUser',
 				method: 'post',
 				data: userMap,
 				success: function(res) {
 					if(res.code == 0) {
-						propSuccess(res.msg, function() {
-							window.location.href = "login.html";
+						propSuccessText(res.msg, function() {
+							if(pageType == 'add') {
+								window.location.href = "login.html";
+							} else {
+								window.location.href = "usermanager-list.html";
+							}
 						})
 					} else {
-						propFail(res.msg, function() {
+						propFailText(res.msg, function() {
 
 						})
 					}
 				}
 			})
+		}
+
+		function getUserInfoById(id, callback) {
+			var userInfo;
+			$.ajax({
+				type: "get",
+				url: "/view-server/Api/getUserInfoById",
+				data: {
+					'id': id
+				},
+				async: false,
+				success: function(res) {
+					if(res.code == 0) {
+						userInfo = res.data;
+						$('#username').val(userInfo.name);
+						$('#email').val(userInfo.email);
+						$('#phone').val(userInfo.phone);
+						$('input[name = sex]').eq(userInfo.sex).attr('checked', true);
+					}
+				}
+			});
+			return userInfo;
 		}
 	</script>
 

@@ -117,6 +117,18 @@
 						}
 					},
 					{
+						title: "角色",
+						align: "center",
+						field: "role",
+						formatter:function(value,row,index){
+							if(value == 'admin'){
+								return '管理员';
+							}else if(value == 'user'){
+								return '用户';
+							}
+						}
+					},
+					{
 						title: "新增时间",
 						align: "center",
 						field: "create_time"
@@ -130,8 +142,8 @@
 						title: "操作",
 						align: "center",
 						formatter: function(value, row, index) {
-							var html = '<a href="view-input.html?type=edit&id=' + row.id + '" class="ui mini teal basic button">编辑</a>' +
-								'<a href="javascript:void(0);" onclick="delete_view(' + row.id + ')" class="ui mini red basic button">删除</a>';
+							var html = '<a href="regist.html?type=edit&id=' + row.id + '" class="ui mini teal basic button">编辑</a>' +
+								'<a href="javascript:void(0);" onclick="delete_user(' + row.id + ')" class="ui mini red basic button">删除</a>';
 							return html;
 						}
 					}
@@ -139,11 +151,11 @@
 			});
 		}
 
-		function delete_view(id) {
-			delThemeConfirm(id);
+		function delete_user(id) {
+			delUserConfirm(id);
 		}
 
-		function delThemeConfirm(id) {
+		function delUserConfirm(id) {
 			layer.open({
 				offset: 'auto',
 				content: '确认删除吗?',
@@ -151,7 +163,7 @@
 				yes: function(index, layero) {
 					$.ajax({
 						type: "get",
-						url: "/view-server/Api/View/delTheme",
+						url: "/view-server/Api/delUser",
 						data: {
 							'id': id
 						},

@@ -34,11 +34,12 @@ function checkRequired(param) {
 	for(var key in param) {
 		if($('#' + key).hasClass('Required') && $('#' + key).val().trim() == '') {
 			$('#checkForm').show();
-			return;
+			return false;
 		} else {
 			$('#checkForm').hide();
 		}
 	}
+	return true;
 }
 
 function propSuccess(res, callback) {
@@ -63,6 +64,15 @@ function propWarn(text, callback) {
 	layer.msg(text, {
 		offset: 'rb',
 		icon: 3,
+		area: ['270px', '70px'],
+		time: 3000
+	}, callback)
+}
+
+function propSuccessText(text, callback) {
+	layer.msg(text, {
+		offset: 'rb',
+		icon: 1,
 		area: ['270px', '70px'],
 		time: 3000
 	}, callback)
