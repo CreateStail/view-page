@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>首页</title>
+		<link href="view-page/css/semantic-ui/semantic.min.css" rel="stylesheet">
+		<link href="view-page/css/layer/layer.css" rel="stylesheet">
+		<link href="view-page/css/typo.css" rel="stylesheet" />
+		<link href="view-page/css/animate.css" rel="stylesheet" />
+		<link href="view-page/lib/prism/prism.css" rel="stylesheet" />
+		<link href="view-page/lib/tocbot/tocbot.css" rel="stylesheet" />
+		<link href="view-page/css/index.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div id="head">
+
+		</div>
+
+		<!--
+        	作者：offline
+        	时间：2019-10-22
+        	描述：内容
+        -->
+		<div class="right menu">
+			<button class="ui right floated basic teal button i-padded-tb" id="addArticle">新增</button>
+		</div>
+		<div class="i-padded-tb-big i-container-small animated fadeIn" id="waypoint">
+			<div class="ui segment">
+				<div class="ui container">
+					<div class="ui top attached segment">
+						<div class="ui horizontal link list" id="theme_list">
+
+						</div>
+					</div>
+					<div class="ui attach segment">
+						<img src="" class="ui fluid rounded image" id="theme_pic">
+					</div>
+					<div class="ui  attached padded segment">
+						<div id="content" class="typo js-toc-content  typo-selection  i-padded-lr-responsive i-padded-tb-large">
+
+						</div>
+					</div>
+				</div>
+				<div id="toolbar"></div>
+			</div>
+		</div>
+		<!--12.4更换左侧工具栏-->
+		<!--		<div class="i-fixed i-left-top-tinny i-width" id="toolbar" style="display: none;">
+			<div class="ui center vertical icon buttons">
+				<a href="" class="ui teal button" id="toHome">简介</a>
+				<a href="" class="ui teal button" id="toBackground">背景</a>
+				<a href="" class="ui teal button" id="toData">数据集</a>
+				<a href="" class="ui teal button" id="toProgram">技术方案</a>
+				<a href="" class="ui teal button" id="toCode">实现代码</a>
+			</div>
+		</div>-->
+	</body>
+	<script src="view-page/js/jquery/jquery.min.js"></script>
+	<script src="view-page/js/semantic-ui/semantic.min.js"></script>
+	<script src="view-page/js/jquery-scrollto/jquery-scrollto.js"></script>
+	<script src="view-page/js/layer/layer.js"></script>
+	<script src="view-page/lib/prism/prism.js"></script>
+	<script src="view-page/lib/tocbot/tocbot.min.js"></script>
+	<script src="view-page/lib/qrcode/qrcode.min.js"></script>
+	<script src="view-page/lib/waypoints/jquery.waypoints.min.js"></script>
+	<script src="view-page/js/function.js"></script>
+	<script>
+		$('.menu.toggle').click(function() {
+			$('.i-item').toggleClass('i-mobile-hide');
+		});
+
+		$(".toc-button").popup({
+			popup: $('.toc-container'),
+			on: 'click',
+			position: 'left center'
+		})
+
+		tocbot.init({
+			toSelector: '.js-toc',
+			contentSelector: '.js-toc-content',
+			headingSelector: 'h1,h2,h3'
+		});
+
+		$(function() {
+			theme_init();
+			$('#head').load("view-page/common/head.html");
+			$('#toolbar').load('view-page/common/toolbar.html', null, function() {
+				$('#toHome').addClass('active teal');
+			});
+
+		})
+
+		//新增
+		$('#addArticle').on('click', function() {
+			window.location.href = "view-page/view/view-input.html?type=add"
+		})
+		//初始化主题内容
+
+		function theme_init() {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/View/listThemeData",
+				async: false,
+				success: function(res) {
+					if(res.code == 0) {
+						var html = "";
+						for(var i = 0; i < res.data.length; i++) {
+							var themeName = "";
+							if(res.data[i].theme.length > 10) {
+								themeName = res.data[i].theme.substr(0, 10) + "...";
+							} else {
+								themeName = res.data[i].theme;
+							}
+							html = '<div class="item i-box-hw">' +
+								'<a href="home.html?theme_id=' + res.data[i].id + '" class="ui orange basic circular button fluid" data-tooltip="'+res.data[i].theme+'" data-position="top center"  data-variation="wide">' + themeName + '</a>' +
+								'</div>';
+							$("#theme_list").append(html);
+						}
+						themeIndex = res.data[0].id;
+					} else {
+						propFail(res, null);
+					}
+				}
+			});
+			queryTheme();
+		}
+
+		function queryTheme() {
+			var themeId = getQueryVariable("theme_id");
+			if(themeId) {
+				getThemeContent(themeId);
+			} else {
+				//默认查询第一个主题
+				themeId = themeIndex;
+				getThemeContent(themeId);
+			}
+		}
+
+		function getThemeContent(theme_id) {
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/View/getThemeContent",
+				data: {
+					'theme_id': theme_id
+				},
+				async: true,
+				success: function(res) {
+					if(res.code == 0) {
+						if(res.data.theme_pic != undefined) {
+							$('#theme_pic').attr('src', res.data.theme_pic);
+							$('#theme_pic').on('error', function() {
+								$('#theme_pic').attr('src', 'view-page/img/unkonw.jpg');
+							})
+						} else {
+							$('#theme_pic').attr('src', 'view-page/img/unkonw.jpg');
+						}
+						$('#content').html(res.data.introduction_html);
+					} else {
+						$('#theme_pic').attr('src', 'view-page/img/unkonw.jpg');
+						propFail(res, null);
+					}
+				}
+			});
+		}
+	</script>
+
+</html>
