@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>发布</title>
+		<link href="../css/semantic-ui/semantic.min.css" rel="stylesheet">
+		<link href="../css/layer/layer.css" rel="stylesheet">
+		<link href="../lib/editormd/css/editormd.min.css" rel="stylesheet" />
+		<link href="../css/bootstrap/bootstrap.min.css" rel="stylesheet">
+		<link href="../css/bootstrap-fileinput/fileinput.min.css" rel="stylesheet">
+		<link href="../css/index.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<div id="head">
+		</div>	
+		<div class="ui attached pointing menu">
+			<div class="ui container">
+				<div class="right menu">
+					<a href="view-input.html?type=add" class=" teal active item">发布</a>
+					<a href="view-list.html" class=" item">列表</a>
+				</div>
+			</div>
+		</div>
+		<!--
+        	作者：offline
+        	时间：2019-10-22
+        	描述：内容
+        -->
+		<div class="i-padded-tb-big i-container-small  fadeIn" id="waypoint">
+			<div class="ui container">
+				<form class="ui form">
+					<div>
+						<div class="required field">
+							<div class="ui left labeled input">
+								<label class="ui compact teal basic label">主题名称</label>
+								<input type="text" id="theme" />
+							</div>
+						</div>
+						<div class="required field">
+							<div class="ui left labeled input">
+								<label class="ui compact teal basic label">主题图片</label>
+							</div>
+							<div>
+								<input type="file" id="theme_pic" name="file" />
+							</div>
+							<div class="ui horizontal list editDiv" id="themeFileDiv">
+
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">简介</h2>
+							<div id="introduction-content" style="z-index: 1 !important;">
+								<textarea placeholder="简介内容" name="content" style="display: none"></textarea>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">背景</h2>
+							<div id="background-content" style="z-index: 1 !important;">
+								<textarea placeholder="背景内容" name="content" style="display: none"></textarea>
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">数据集</h2>
+							<div class="required field">
+								<div>
+									<input type="file" id="theme_data" name="file" />
+								</div>
+							</div>
+							<div class="ui horizontal list editDiv" id="dataFileDiv">
+
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">技术方案</h2>
+							<div class="required field">
+								<div>
+									<input type="file" id="theme_program" name="file" />
+								</div>
+							</div>
+							<div class="ui horizontal list editDiv" id="programFileDiv">
+
+							</div>
+						</div>
+						<div>
+							<h2 class="ui header">实现代码</h2>
+							<d5iv class="required field">
+								<div>
+									<input type="file" id="theme_code" name="file" />
+								</div>
+								<div class="ui horizontal list editDiv" id="codeFileDiv">
+
+								</div>
+						</div>
+						<div>
+							<span style="color: red;">***如果资料已存在,请下载模板</span>
+							<a class="ui blue button" id="templete">
+								点击下载模板
+							</a>
+						</div>
+						<div>
+							<label class="ui lable">模板上传</label>
+							<input type="file" id="templeteUpload" />
+						</div>
+					</div>
+			</div>
+			<div class="ui divider"></div>
+			<div class="ui right aligned container">
+				<button type="button" class="ui button" onclick="window.history.go(-1)">返回</button>
+				<button type="button" id="save-btn" class="ui secondary button">保存</button>
+				<button type="button" id="publish-btn" class="ui teal button">发布</button>
+			</div>
+			</form>
+		</div>
+		</div>
+	</body>
+	<script src="../js/jquery/jquery1.11.3.js"></script>
+	<script src="../js/semantic-ui/semantic.min.js"></script>
+	<script src="../js/bootstrap/bootstrap.min.js"></script>
+	<script src="../js/bootstrap-fileinput/fileinput.min.js"></script>
+	<script src="../js/bootstrap-fileinput/zh.js"></script>
+	<script src="../lib/editormd/editormd.js"></script>
+	<script src="../js/all.js"></script>
+	<script src="../js/function.js"></script>
+	<script>
+		$('.menu.toggle').click(function() {
+			$('.i-item').toggleClass('i-mobile-hide');
+		});
+		var count = 0;
+		var business_ids = {};
+		var pageType = getQueryVariable('type');
+		$(function() {
+			$('#head').load('../common/head.html');
+			$('#templete').attr('href',"http://"+window.location.host + "/view-server/static/usr/local/src/view-service/attachment/templete/uploadFileTemplete.xlsx");
+			if(pageType === 'add') {
+				contentInit();
+			} else if(pageType === 'edit') {
+				getThemeDetails(getQueryVariable('id'));
+			}
+		});
+
+		function contentInit() {
+			fileInit('theme_pic', '/view-server/Api/upload')
+			fileInit('theme_data', '/view-server/Api/upload')
+			fileInit('theme_program', '/view-server/Api/upload')
+			fileInit('theme_code', '/view-server/Api/upload')
+			introductionEditor = editormd("introduction-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+			});
+
+			backgroundEditor = editormd("background-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+			});
+		}
+
+		function contentEdit(data) {
+			fileInit('theme_pic', '/view-server/Api/upload')
+			fileInit('theme_data', '/view-server/Api/upload')
+			fileInit('theme_program', '/view-server/Api/upload')
+			fileInit('theme_code', '/view-server/Api/upload')
+			introductionEditor = editormd("introduction-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+				onload: function() {}
+			});
+
+			backgroundEditor = editormd("background-content", {
+				width: "100%",
+				height: 640,
+				syncScrolling: "single",
+				path: "../lib/editormd/lib/",
+				saveHTMLToTextarea: true,
+				flowChart: true, // 开启流程图支持，默认关闭
+				/* 上传图片配置 */
+				imageUpload: true,
+				imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+				imageUploadURL: "/view-server/Api/uploadImage", //注意你后端的上传图片服务地址
+				/**设置主题颜色*/
+				theme: "gray",
+				onload: function() {
+					introductionEditor.setMarkdown(data.theme.introduction_content);
+					backgroundEditor.setMarkdown(data.background.background_content);
+				}
+			});
+		}
+		$('#save-btn').on('click', function() {
+			var themePic = $('#theme_pic').val().trim();
+			if(themePic != '') {
+				count++;
+				$('#theme_pic').fileinput('upload');
+			}
+			var themeData = $('#theme_data').val().trim();
+			if(themeData != '') {
+				count++;
+				$('#theme_data').fileinput('upload');
+			}
+			var themeProgram = $('#theme_program').val().trim();
+			if(themeProgram != '') {
+				count++;
+				$('#theme_program').fileinput('upload');
+			}
+			var themeCode = $('#theme_code').val().trim();
+			if(themeCode != '') {
+				count++;
+				$('#theme_code').fileinput('upload');
+			}
+			if(themePic == '' && themeData == '' && themeProgram == '' && themeCode == '') {
+				transform();
+			}
+		})
+
+		function transform() {
+			var themeMap = {};
+			themeMap.theme = $('#theme').val().trim();
+			if(themeMap.theme == '') {
+				propWarn("主题名称不能为空", null);
+				return;
+			}
+			themeMap.themePic_Name = $('#theme_pic').attr('fileName') == undefined ? '' : $('#theme_pic').attr('fileName');
+			themeMap.themeData_Name = $('#theme_data').attr('fileName') == undefined ? '' : $('#theme_data').attr('fileName');
+			themeMap.themeProgram_Name = $('#theme_program').attr('fileName') == undefined ? '' : $('#theme_program').attr('fileName');
+			themeMap.themeCode_Name = $('#theme_code').attr('fileName') == undefined ? '' : $('#theme_code').attr('fileName');
+			themeMap.themePic_Path = $('#theme_pic').attr('filePath') == undefined ? '' : $('#theme_pic').attr('filePath');
+			themeMap.themeData_Path = $('#theme_data').attr('filePath') == undefined ? '' : $('#theme_data').attr('filePath');
+			themeMap.themeProgram_Path = $('#theme_program').attr('filePath') == undefined ? '' : $('#theme_program').attr('filePath');
+			themeMap.themeCode_Path = $('#theme_code').attr('filePath') == undefined ? '' : $('#theme_code').attr('filePath');
+			themeMap.themePic_Addr = $('#theme_pic').attr('fileAddr') == undefined ? '' : $('#theme_pic').attr('fileAddr');
+			themeMap.themeData_Addr = $('#theme_data').attr('fileAddr') == undefined ? '' : $('#theme_data').attr('fileAddr');
+			themeMap.themeProgram_Addr = $('#theme_program').attr('fileAddr') == undefined ? '' : $('#theme_program').attr('fileAddr');
+			themeMap.themeCode_Addr = $('#theme_code').attr('fileAddr') == undefined ? '' : $('#theme_code').attr('fileAddr');
+			themeMap.introduction = introductionEditor.getMarkdown();
+			themeMap.introduction_html = introductionEditor.getHTML();
+			themeMap.background = backgroundEditor.getMarkdown();
+			themeMap.background_html = backgroundEditor.getHTML();
+			themeMap.pageType = pageType;
+			if(pageType == 'edit'){
+				themeMap.theme_id = getQueryVariable('id');
+				themeMap.business_ids = JSON.stringify(business_ids);
+			}
+			var formData = new FormData();
+			for(var key in themeMap) {
+				formData.append(key, themeMap[key]);
+			}
+			formData.append("templeteFile", $('#templeteUpload')[0].files[0]);
+			$.ajax({
+				type: "post",
+				url: "/view-server/Api/View/saveThemeContent",
+				async: true,
+				data: formData,
+				dataType: 'json',
+				//contentType: "multipart/form-data",
+				// 告诉jQuery不要去处理发送的数据
+				processData: false,
+				// 告诉jQuery不要去设置Content-Type请求头
+				contentType: false,
+				success: function(res) {
+					if(res.code == 0) {
+						propSuccess(res, function() {
+							window.location.reload();
+						})
+					}
+				}
+			});
+
+		}
+
+		function fileInit(ctrlName, uploadUrl) {
+			var control = $('#' + ctrlName);
+			control.fileinput({
+				language: 'zh',
+				uploadUrl: uploadUrl,
+				enctype: 'multipart/form-data',
+				showUpload: false, //是否显示上传按钮
+				showPreview: true, //展前预览
+				showRemove: true,
+				showCaption: false, //是否显示标题
+				maxFileSize: 51200, //上传文件最大的尺寸kb 50m
+				dropZoneEnabled: true, //是否显示拖拽区域
+				browseClass: "btn btn-primary", //按钮样式
+				uploadAsync: true, //默认异步上传
+			}).on('fileuploaded', function(event, data, previewId, index) {
+				count--;
+				control.attr("fileName", data.response.data.fileName);
+				control.attr("filePath", data.response.data.filePath);
+				control.attr("fileAddr", data.response.data.fileAddr);
+				if(count == 0) {
+					transform();
+				}
+			}).on('filebatchuploadsuccess', function(event, data, previewId, index) { //同步上传回调
+				count--;
+				control.attr("fileName", data.response.data.fileName);
+				control.attr("filePath", data.response.data.filePath);
+				control.attr("fileAddr", data.response.data.fileAddr);
+				if(count == 0) {
+					transform();
+				}
+			});
+		}
+
+
+		function getThemeDetails(id) {
+			$.ajax({
+				url: "/view-server/Api/View/getThemeDetails",
+				type: "post",
+				data: {
+					'themeId': id
+				},
+				success: function(res) {
+					if(res.code == 0) {
+						var data = res.data;
+						business_ids.background_id = data.background.id;
+						business_ids.program_id = data.program.id;
+						business_ids.data_id = data.data.id;
+						business_ids.code_id = data.code.id;
+						contentEdit(data);
+						$('#theme').val(data.theme.theme);
+						if(data.file.length > 0) {
+							for(var i = 0; i < data.file.length; i++) {
+								if(data.file[i].business_name == '主题图片') {
+									$('#themeFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '数据集') {
+									$('#dataFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '技术方案') {
+									$('#programFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								} else if(data.file[i].business_name == '实现代码') {
+									$('#codeFileDiv').append('<div class = "ui orange item button i-padded-tb" id=ele' + i + '>' + data.file[i].file_name + '<i class="x icon i-padded-lr-tinny-responsive" onclick=delSignFile(' + data.file[i].id + ',this)></i></div>');
+								}
+							}
+						}
+					}
+				}
+			})
+		}
+
+
+		function delSignFile(id, i) {
+			confirmLayer(id,i);
+		}
+
+		function confirmLayer(id,i) {
+			layer.open({
+				offset: 'auto',
+				content: '确认删除吗?',
+				btn: ['确认', '关闭'],
+				yes: function(index, layero) {
+					$.ajax({
+						type: "post",
+						url: "/view-server/Api/View/delFile",
+						async: true,
+						data: {
+							'id': id
+						},
+						success: function(res) {
+							if(res.code == 0) {
+								$(i).parent().remove();
+							}
+						}
+					});
+					layer.closeAll();
+				},
+				btn2: function(index, layero) {
+					layer.close();
+				},
+				shade: 0,
+			});
+		}
+	</script>
+
+</html>

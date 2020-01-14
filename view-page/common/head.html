@@ -1,0 +1,85 @@
+<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
+	<div class="ui container">
+		<div class="ui inverted secondary stackable menu">
+			<h2 class="ui teal header item">数据集管理系统</h2>
+			<a href="" id="homepage" class="i-item item i-mobile-hide"><i class="home mini icon"></i>首页</a>
+			<a href="" id="userManager" class="i-item item i-mobile-hide i-hide" style="display: none;"><i class="user mini icon"></i>用户管理</a>
+			<!--<div class="i-item right item i-mobile-hide">
+						<div class="ui icon inverted transparent input">
+							<input type="text" placeholder="Search...">
+							<i class="search link icon"></i>
+						</div>
+					</div>-->
+			<div class="right item" id="rlDiv">
+				<a class="ui inverted button i-margin-right-tiny" id="login">登录</a>
+				<a class="ui inverted button" id="regist">注册</a>
+			</div>
+			<div class="right menu i-item i-mobile-hide" id="loginedDiv">
+				<div class="ui dropdown item userInfo" id="userInfo">
+					<div class="text">
+						<img class="ui avatar image" src="" id="headImg" />
+					</div>
+					<i class="dropdown icon"></i>
+					<div class="menu" id="loginMenu">
+						<div class="item">注销</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
+		<i class="sidebar icon"></i>
+	</a>
+</nav>
+
+<script>
+	$(function() {
+		$('#headImg').attr('src', getCookie('headImg'));
+		$('#headImg').after(getCookie('userName'));
+		//查询是否已登录
+		$.ajax({
+			type: "get",
+			url: "/view-server/Api/article",
+			async: false,
+			success: function(res) {
+				if(res.code == 0) {
+					//已登录显示登陆人信息,否则显示登录注册块
+					$('#loginedDiv').show();
+					$('#rlDiv').hide();
+					getUserAuthority(res.data);
+				} else {
+					$('#loginedDiv').hide();
+					$('#addArticle').hide();
+					$('#rlDiv').show();
+				}
+			}
+		});
+		$('#homepage').attr('href', 'http://' + window.location.host + "/home.html");
+		$('#userManager').attr('href', 'http://' + window.location.host + "/view-page/view/usermanager-list.html");
+	})
+
+	function getUserAuthority(data) {
+		if(data.role == 'admin') {
+			$('#addArticle').show();
+			$('#userManager').show();
+		} else {
+			$('#addArticle').hide();
+			$('#userManager').hide();
+		}
+	}
+	//登录跳转
+	$('#login').on('click', function() {
+		window.location.href = "http://" + window.location.host + "/view-page/view/login.html";
+	})
+
+	$('#regist').on('click', function() {
+		window.location.href = "http://" + window.location.host + "/view-page/view/regist.html?type=add";
+	})
+
+	$('#userInfo').mouseenter(function() {
+		$('#loginMenu').show();
+	})
+	$('#loginMenu').mouseleave(function() {
+		$('#loginMenu').hide();
+	})
+</script>
