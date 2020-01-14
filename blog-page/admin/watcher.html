@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>监控管理</title>
+		<link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/layer/2.3/skin/layer.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.css" rel="stylesheet">
+		<link href="../static/css/index.css" rel="stylesheet" />
+		<style type="text/css">
+			.watcherIframe {
+				width: 80%;
+				height: 100%;
+				frameborder: no;
+				border: 0;
+				marginwidth: 0;
+				marginheight: 0;
+				allowtransparency: yes;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="ui bottom attached segment pushable">
+			<div class="ui visible inverted left vertical sidebar menu">
+				<a class="item" id="swagger">swagger</a>
+				<a class="item" id="druid">druid</a>
+				<a class="item" id="eureka">eureka</a>
+				<a class="item" id="zipkin">zipkin</a>
+			</div>
+			<div class="pusher">
+				<div class="ui basic segment">
+					<h3 class="ui header">监控内容</h3>
+					<iframe src="" id="watchContent" class="watcherIframe" onload="changeFrameHeight(this)"></iframe>
+				</div>
+			</div>
+	</body>
+	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+	<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/bootstrap-table.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap-table/1.15.4/locale/bootstrap-table-zh-CN.min.js"></script>
+	<script>
+		$('#eureka').on('click', function() {
+			$('#watchContent').attr('src', 'http://' + window.location.host + ":8000");
+		})
+
+		function changeFrameHeight(that) {
+			$(that).height(document.documentElement.clientHeight - 80);
+		}
+	</script>
+
+</html>

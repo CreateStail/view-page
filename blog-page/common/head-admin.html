@@ -1,0 +1,25 @@
+<nav class="ui inverted attached segment i-padded-tb-mini i-shadow-small">
+	<div class="ui container">
+		<div class="ui inverted secondary stackable menu">
+			<h2 class="ui teal header item">管理后台</h2>
+			<a href="blogs.html" class="active i-item item i-mobile-hide"><i class="home mini icon"></i>博客</a>
+			<a href="types.html" class=" i-item item i-mobile-hide"><i class="idea mini icon"></i>分类</a>
+			<a href="tags.html" class="i-item item i-mobile-hide"><i class="tags mini icon"></i>标签</a>
+			<a href="#" class="i-item item i-mobile-hide"><i class="shield alternate mini icon"></i>监控管理</a>
+			<div class="right menu i-item i-mobile-hide">
+				<div class="ui dropdown item">
+					<div class="text">
+						<img class="ui avatar image" src="../static/img/avatar.png" /> 李仁密
+					</div>
+					<i class="dropdown icon"></i>
+					<div class="menu">
+						<a v-on:click="out" class="item" id="logout">注销</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
+		<i class="sidebar icon"></i>
+	</a>
+</nav>
