@@ -46,10 +46,12 @@
 	</body>
 	<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.js"></script>
+	<script src="../static/js/function.js"></script>
 	<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<!-- axios -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   
 	<script>
 	  var user={
 		  		'username':'',
@@ -81,15 +83,16 @@
 	  		
 	  			axios({
 	  				method:"post",
-	  				url:"/blog-server/admin/login",
+	  				url:urlPath + "/login/auth",
 	  				headers:{
 	  					"Content-Type":"multipart/form-data"
 	  				},
 	  				withCredentials:true,
 	  				data:formData
 	  			}).then((res)=>{
-	  				if(res.data.code == 0){
-	  					window.localStorage.setItem("token",res.data.msg);
+	  				if(res.data.code == 200){
+//	  					window.localStorage.setItem("token",res.data.msg);
+						window.sessionStorage.setItem("myblog",res.data.data);
 	  					window.location.href="blogs.html";
 	  				}else if(res.data.code == -1){
 	  					layer.msg(res.data.msg,{

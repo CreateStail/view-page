@@ -46,8 +46,8 @@
 		<div class="ui attached pointing menu">
 			<div class="ui container">
 				<div class="right menu">
-					<a href="#" class="item">发布</a>
-					<a href="#" class="teal active item">列表</a>
+					<a href="blogs-input.html?type=add" class="item">发布</a>
+					<a href="blogs.html" class="teal active item">列表</a>
 				</div>
 			</div>
 		</div>
@@ -178,7 +178,7 @@
 
 		function blogTable() {
 			$("#blogTable").bootstrapTable({
-				url: '/blog-server/admin/blogs',
+				url: urlPath + '/blog/api/blogs',
 				method: 'get',
 				contentType: 'application/json',
 				sidePagination: 'server',
@@ -198,7 +198,7 @@
 				queryParams: function(params) {
 					params.pageSize = this.pageSize;
 					params.page = this.pageNumber;
-					params.sort = params.sort;
+					params.sort = "create_time";
 					params.order = params.order;
 					params.keyMap = JSON.stringify(keyMap);
 					return params;
@@ -263,7 +263,7 @@
 		
 		function init(){
 			$.ajax({
-				url:"/blog-server/admin/listAllType",
+				url:urlPath + "/type/api/listType",
 				method:"get",
 				async:false,
 				success:function(res){

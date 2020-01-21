@@ -163,7 +163,7 @@
 			function tagDetail() {
 				$.ajax({
 					type: "get",
-					url: "/blog-server/admin/edit_tag",
+					url: urlPath + "/tag/api/edit_tag",
 					data: {
 						'id': id
 					},
@@ -185,7 +185,7 @@
 							$.ajax({
 								type: "post",
 								contentType: 'application/json',
-								url: "/blog-server/admin/save_tag",
+								url: urlPath + "/tag/api/save_tag",
 								data: JSON.stringify(tag),
 								success: function(res) {
 									if(res.code === 0) {
@@ -203,7 +203,7 @@
 							checkRequired(tag);
 							$.ajax({
 								type: "post",
-								url: "/blog-server/admin/update_tag",
+								url: urlPath + "/tag/api/update_tag",
 								contentType: 'application/json',
 								async: true,
 								data: JSON.stringify(tag),

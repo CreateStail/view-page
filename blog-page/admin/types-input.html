@@ -161,7 +161,7 @@
 			function typeDetail() {
 				$.ajax({
 					type: "get",
-					url: "/blog-server/admin/edit_type",
+					url: urlPath + "/type/api/edit_type",
 					data: {
 						'id': id
 					},
@@ -183,7 +183,7 @@
 							$.ajax({
 								type: "post",
 								contentType: 'application/json',
-								url: "/blog-server/admin/save_type",
+								url: urlPath + "/type/api/save_type",
 								data: JSON.stringify(type),
 								success: function(res) {
 									if(res.code === 0) {
@@ -201,7 +201,7 @@
 							checkRequired(type);
 							$.ajax({
 								type: "post",
-								url: "/blog-server/admin/update_type",
+								url: urlPath + "/type/api/update_type",
 								contentType: 'application/json',
 								async: true,
 								data: JSON.stringify(type),

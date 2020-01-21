@@ -13,9 +13,37 @@
 					<i class="search link icon"></i>
 				</div>
 			</div>
+			<div class="right item" id="rlDiv">
+				<a class="ui inverted button i-margin-right-tiny" id="login">登录</a>
+				<a class="ui inverted button" id="regist">注册</a>
+			</div>
+			<div class="right menu i-item i-mobile-hide" id="loginedDiv">
+				<div class="ui dropdown item userInfo" id="userInfo">
+					<div class="text">
+						<img class="ui avatar image" src="" id="headImg" />
+					</div>
+					<i class="dropdown icon"></i>
+					<div class="menu" id="loginMenu">
+						<div class="item">注销</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<a href="#" class="ui menu toggle black button icon i-right-top i-mobile-show">
 		<i class="sidebar icon"></i>
 	</a>
 </nav>
+
+<script>
+	$(function(){
+		
+		
+		
+	})
+	
+	//登录跳转
+	$('#login').on('click',function(){
+		$('#login').attr('href','admin/login.html');
+	})
+</script>

@@ -127,12 +127,12 @@
 
 			function tagsTable() {
 				$("#tagsTable").bootstrapTable({
-					url: '/blog-server/admin/tags',
+					url: urlPath + '/tag/api/tags',
 					method: 'get',
 					contentType: 'application/json',
 					sidePagination: 'server',
 					cache: false,
-					sortOrder: 'desc',
+//					sortOrder: 'desc',
 					pageNumber: 1,
 					paginationPreText: "上一页",
 					paginationNextText: "下一页",
@@ -188,7 +188,7 @@
 			function delete_tag(id) {
 				$.ajax({
 					type: "get",
-					url: "/blog-server/admin/delete_tag",
+					url: urlPath + "/tag/api/delete_tag",
 					data: {
 						'id': id
 					},

@@ -125,12 +125,12 @@
 
 			function typeTable() {
 				$("#typeTable").bootstrapTable({
-					url: '/blog-server/admin/types',
+					url: urlPath + "/type/api/types',
 					method: 'get',
 					contentType: 'application/json',
 					sidePagination: 'server',
 					cache: false,
-					sortOrder: 'desc',
+//					sortOrder: 'desc',
 					pageNumber: 1,
 					paginationPreText: "上一页",
 					paginationNextText: "下一页",
@@ -186,7 +186,7 @@
 			function delete_type(id){
 				$.ajax({
 					type:"get",
-					url:"/blog-server/admin/delete_type",
+					url:urlPath + "/type/api/delete_type",
 					data:{'id':id},
 					success:function(res){
 						propSuccess(res,function(){

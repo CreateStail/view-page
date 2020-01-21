@@ -1,12 +1,15 @@
+//请求绝对路径地址
+var urlPath = "http://192.168.47.28:8003";
+
 $(function() {
 	$.ajaxSetup({
 		beforeSend: function(xhr) {
-			xhr.setRequestHeader('token', window.localStorage.getItem('token'));
+			xhr.setRequestHeader('token', window.sessionStorage.getItem('myblog'));
 		},
 		complete: function(xhr) {
-			if(xhr.responseJSON.code === -1 && xhr.responseJSON.msg === '请登录') {
-				window.location.href = "login.html";
-			};
+//			if(xhr.responseJSON.code === -1 && xhr.responseJSON.msg === '请登录') {
+//				window.location.href = "login.html";
+//			};
 		}
 	});
 })
